@@ -63,3 +63,4 @@ ENV/
 
 .spyderproject
 .ropeproject
+.pyproject
