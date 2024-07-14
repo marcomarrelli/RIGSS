@@ -4,12 +4,15 @@
 
 import os
 import sys
+# import logging
 
 from pathlib import Path
 
 from PyQt5.QtCore import QUrl
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterSingletonType
 from PyQt5.QtGui import QGuiApplication
+
+from init import initializeDatabase
 
 CURRENT_DIRECTORY = Path(__file__).resolve().parent
 
@@ -20,6 +23,8 @@ if __name__ == '__main__':
     app = QGuiApplication(sys.argv)
     app.setOrganizationName("Marrelli and Zanchini")
     app.setApplicationName("RIGSS")
+
+    initializeDatabase()
 
     qmlRegisterSingletonType(themeFilePath, 'ApplicationSettings', 1, 0, 'Theme')
 

@@ -46,16 +46,31 @@ ApplicationWindow {
 
     background: Rectangle { color: Theme.dark }
 
-    // StackView {
-    //     anchors.fill: parent
-    // }
-
-    LoginPage {
-        id: mainPagePanel
+    StackView {
+        id: stack
 
         anchors.fill: parent
+
+        Component.onCompleted: stack.push(mainPageWrapper, loginPageWrapper)
     }
-    
+
+    Component {
+        id: mainPageWrapper
+        
+        MainPage {
+            id: mainPage
+        }
+    }
+    Component {
+        id: loginPageWrapper
+
+        LoginPage {
+            id: loginPage            
+        
+            onLoggedSuccessfully: stack.pop(StackView.Immediate)
+        }
+    }
+
     Component.onCompleted: rigss.show()
 }
 

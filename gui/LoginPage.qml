@@ -13,6 +13,8 @@ Item {
     property color backgroundColor: Theme.mid
     readonly property real radius: 25
 
+    signal loggedSuccessfully()
+
     Rectangle {
         id: bodyBackground
 
@@ -52,13 +54,14 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(body.height, 10)-parent.spacing
 
-            text: "Login" // Username + Password
+            text: qsTr("Login") // Username + Password
+            onClicked: loginPage.loggedSuccessfully()
         }
         Controls.Button {
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(body.height, 10)-parent.spacing
 
-            text: "Register" // CF, Username, Password e Ripeti Password
+            text: qsTr("Register") // CF, Username, Password e Ripeti Password
         }
     }
 

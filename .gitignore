@@ -64,3 +64,5 @@ ENV/
 .spyderproject
 .ropeproject
 .pyproject
+
+.sqlite3
