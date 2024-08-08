@@ -40,6 +40,7 @@ C.TextField {
     font.bold: textfield.bold
     color: textfield.hovered && textfield.hoverEnabled && !textfield.focus ? textfield.highlightedColor : textfield.textColor
 
+    opacity: textfield.placeholder === "" ? 1 : 0.75
     placeholderText: textfield.placeholder
     placeholderTextColor: textfield.placeholderColor
     verticalAlignment: Text.AlignVCenter
