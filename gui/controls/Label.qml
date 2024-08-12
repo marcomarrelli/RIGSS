@@ -11,6 +11,7 @@ T.Label {
     property real fontSize: 12
     property string fontFamily: ""
 
+    property bool hoverEnabled: false
     property bool bold: false
 
     property color textColor: Theme.text
@@ -23,8 +24,10 @@ T.Label {
         bold: label.bold
         family: label.fontFamily
     }
-    color: label.textColor
+    color: hoverHandler.hovered ? label.highlightedColor : label.textColor
 
     verticalAlignment: Text.AlignVCenter
     horizontalAlignment: Text.AlignHCenter
+
+    HoverHandler { id: hoverHandler; enabled: label.hoverEnabled }
 }

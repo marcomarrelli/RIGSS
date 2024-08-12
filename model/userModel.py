@@ -41,44 +41,24 @@ class Users(QObject):
                         """)
 
     @pyqtSlot(str, str, str, str, str, result=bool)
-    def addUser(self, fiscalCode: str, name: str, surname: str, dateOfBirth: str, password: str) -> bool:
+    def addUser(self, nickname: str, name: str, surname: str, birthday: str, birthplace: str, password: str) -> bool:
         queryString = """
-            INSERT INTO public.users (fiscalCode, name, surname, dateOfBirth, password)
-            VALUES(:fiscalCode, :name, :surname, :dateOfBirth, :password)
+            INSERT INTO Utente (Nickname, Nome, Cognome, DataNascita, Luogo, Password)
+            VALUES(:nickname, :name, :surname, :birthday, :birthplace, :password)
         """
 
         query = QSqlQuery()
         query.prepare()
 
-        if not fiscalCode or not name or not surname or not dateOfBirth or not password:
+        if not nickname or not name or not surname or not birthday or not password:
             return False
 
-        query.bindValue(":fiscalCode", fiscalCode)
+        query.bindValue(":fiscalCode", nickname)
         query.bindValue(":name", name)
         query.bindValue(":surname", surname)
-        query.bindValue(":dateOfBirth", dateOfBirth)
+        query.bindValue(":birthday", birthday)
+        query.bindValue(":birthplace", birthplace)
         query.bindValue(":password", password)
 
         done = query.exec()
         return done
-
-    #@pyqtSlot(str, str, str, str, str, str)
-    #def add(self, name: str, surname: str, taxcode: str, cellnum: str, email: str, companyName: str) -> bool:
-    #    query = QSqlQuery()
-    #    query.prepare("""INSERT INTO public.clienti
-    #                    (cognome, nome, codice_fiscale, telefono, email, nome_azienda)
-    #                    VALUES(:surname, :name, :taxcode, :cellnum, :email, :company)
-    #                """)
-
-    #    if not name or not surname or not taxcode:
-    #        return False
-    #    
-    #    query.bindValue(":surname", surname)
-    #    query.bindValue(":name", name)
-    #    query.bindValue(":taxcode", taxcode)
-    #    query.bindValue(":cellnum", cellnum)
-    #    query.bindValue(":email", email)
-    #    query.bindValue(":company", companyName)
-
-    #    done = query.exec()
-    #    return done

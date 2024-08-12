@@ -49,6 +49,7 @@ ToolBar {
             Layout.fillHeight: true
 
             text: "RIGSS"
+            bold: true
         }
         Controls.Button { 
             Layout.preferredWidth: Utils.perc(parent.width, 20)-parent.spacing

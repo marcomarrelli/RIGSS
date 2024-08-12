@@ -72,6 +72,23 @@ Item {
                 body.visible = false
             }
         }
+        Controls.Label {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Utils.perc(body.height, 10)-parent.spacing
+            Layout.alignment: Qt.AlignHCenter
+
+            text: qsTr("Enter without being logged or registered")
+            hoverEnabled: true
+            opacity: 0.75
+            font.underline: true
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                }
+            }
+        }
     }
 
     ColumnLayout {
@@ -139,15 +156,6 @@ Item {
 
     ColumnLayout {
         id: registerBody
-
-        property bool status: registerBody.check()
-
-        function check() {
-            // UNIQUE USERNAME
-            // Name and Surname !== ""
-
-            if(name.text === "" || surname.text === "") return false
-        }
 
         anchors {
             fill: bodyBackground
@@ -257,7 +265,7 @@ Item {
                 iconCode: Utils.getIcon(0xEAFA)
 
                 onClicked: {
-                    
+
                 }
             }
         }
