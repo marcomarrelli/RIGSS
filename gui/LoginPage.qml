@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15 as C
 import QtQuick.Layouts 1.15
 
+import QtQuick.Controls 1.4 as OldC
+
 import ApplicationSettings 1.0
 
 import "./controls" as Controls
@@ -115,7 +117,7 @@ Item {
                 Layout.preferredHeight: parent.height
                 Layout.alignment: Qt.AlignLeft
 
-                text: "back"
+                iconCode: Utils.getIcon(0xE024)
 
                 onClicked: {
                     loginUsername.text = ""
@@ -130,13 +132,22 @@ Item {
                 Layout.preferredHeight: parent.height
                 Layout.alignment: Qt.AlignRight
 
-                text: "go in"
+                iconCode: Utils.getIcon(0xE428)
             }
         }
     }
 
     ColumnLayout {
         id: registerBody
+
+        property bool status: registerBody.check()
+
+        function check() {
+            // UNIQUE USERNAME
+            // Name and Surname !== ""
+
+            if(name.text === "" || surname.text === "") return false
+        }
 
         anchors {
             fill: bodyBackground
@@ -160,7 +171,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-            placeholder: "Insert Username"
+            placeholder: "Username"
         }
         RowLayout {
             Layout.fillWidth: true
@@ -169,16 +180,16 @@ Item {
             Controls.TextField {
                 id: registerName
 
-                Layout.fillWidth: true
+                Layout.preferredWidth: Utils.perc(registerBody.width, 50)-(parent.spacing/2)
                 Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-                placeholder: "Insert Name"
+                placeholder: "Name"
             }
             Controls.TextField {
                 id: registerSurname
 
-                Layout.fillWidth: true
+                Layout.preferredWidth: Utils.perc(registerBody.width, 50)-(parent.spacing/2)
                 Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-                placeholder: "Insert Surname"
+                placeholder: "Surname"
             }
         }
         RowLayout {
@@ -188,16 +199,16 @@ Item {
             Controls.TextField {
                 id: registerDoB
 
-                Layout.fillWidth: true
+                Layout.preferredWidth: Utils.perc(registerBody.width, 40)-(parent.spacing/2)
                 Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-                placeholder: "Insert Date of Birth"
+                placeholder: "dd-mm-YYYY"
             }
             Controls.TextField {
                 id: registerPosition
 
-                Layout.fillWidth: true
+                Layout.preferredWidth: Utils.perc(registerBody.width, 60)-(parent.spacing/2)
                 Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-                placeholder: "Insert Position"
+                placeholder: "Birthplace"
             }
         }
         Controls.TextField {
@@ -205,25 +216,25 @@ Item {
 
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-            placeholder: "Insert Password"
+            placeholder: "Password"
         }
         Controls.TextField {
             id: registerConfirmPassword
 
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-            placeholder: "Insert Repeat Password"
+            placeholder: "Repeat Password"
         }
         RowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
 
             Controls.Button {
-                Layout.preferredWidth: Utils.perc(registerBody.width, 50)-parent.spacing
+                Layout.preferredWidth: Utils.perc(registerBody.width, 50)-(parent.spacing/2)
                 Layout.preferredHeight: parent.height
                 Layout.alignment: Qt.AlignLeft
 
-                text: "back"
+                iconCode: Utils.getIcon(0xE024)
 
                 onClicked: {
                     registerUsername.text = ""
@@ -239,11 +250,15 @@ Item {
                 }
             }
             Controls.Button {
-                Layout.preferredWidth: Utils.perc(registerBody.width, 50)-parent.spacing
+                Layout.preferredWidth: Utils.perc(registerBody.width, 50)-(parent.spacing/2)
                 Layout.preferredHeight: parent.height
                 Layout.alignment: Qt.AlignRight
 
-                text: "regstr"
+                iconCode: Utils.getIcon(0xEAFA)
+
+                onClicked: {
+                    
+                }
             }
         }
     }

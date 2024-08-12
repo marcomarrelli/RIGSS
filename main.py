@@ -10,7 +10,7 @@ from pathlib import Path
 
 from PyQt5.QtCore import QUrl
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterSingletonType
-from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtGui import QGuiApplication, QFontDatabase
 
 from init import initializeDatabase
 
@@ -28,12 +28,18 @@ if __name__ == '__main__':
 
     qmlRegisterSingletonType(themeFilePath, 'ApplicationSettings', 1, 0, 'Theme')
 
+    fontCheck = QFontDatabase.addApplicationFont(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "Phosphor.ttf"))
+    if fontCheck < 0:
+        print("FATAL: 'Phosphor Duotone' Font Not Found.")
+        sys.exit(-1)
+
     engine = QQmlApplicationEngine()
     engine.quit.connect(app.quit)
 
     engine.load(mainFilePath)
 
     if not engine.rootObjects():
+        print("FATAL: Engine Fatal Error")
         sys.exit(-1)
 
     sys.exit(app.exec())

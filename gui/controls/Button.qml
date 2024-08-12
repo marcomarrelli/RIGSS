@@ -10,8 +10,9 @@ T.Button {
 
     property real radius: 5
     property real borderWidth: 1
-    property real fontSize: 12
+    property real fontSize: button.iconCode === "" ? 12 : 20
 
+    property string iconCode: ""
     property bool bold: false
 
     property color textColor: Theme.text
@@ -33,14 +34,17 @@ T.Button {
     }
 
     contentItem: Label {
-        text: button.text
+        text: button.iconCode === "" ? button.text : button.iconCode
         color: button.textColor
 
         font {
             pointSize: button.fontSize
             bold: button.bold
+            family: button.iconCode === "" ? button.font.family : "Phosphor"
         }
 
+        antialiasing: true
+        
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }

@@ -31,7 +31,7 @@ ToolBar {
             backgroundColor: Theme.light
             borderColor: "transparent"
 
-            text: Theme.isDarkMode() ? "Light Mode" : "Dark Mode" // TO DO: Sostituire con Icone
+            iconCode: Utils.getIcon(Theme.isDarkMode() ? 0xE474 : 0xE330)
             onClicked: Theme.switchMode()
         }
         Controls.Button { 
@@ -41,7 +41,7 @@ ToolBar {
             backgroundColor: Theme.light
             borderColor: "transparent"
 
-            text: parentWindow.visibility === Window.FullScreen ? "Reduce" : "FullScreen" // TO DO: Sostituire con Icone
+            iconCode: Utils.getIcon(parentWindow.visibility === Window.FullScreen ? 0xE1CE : 0xE1D0)
             onClicked: parentWindow.visibility === Window.FullScreen ? parentWindow.showNormal() : parentWindow.showFullScreen()
         }
         Controls.Label {
@@ -57,7 +57,7 @@ ToolBar {
             backgroundColor: Theme.light
             borderColor: "transparent"
 
-            text: "ESCI" // TO DO: Sostituire con Icone
+            iconCode: Utils.getIcon(0xE42A)
             onClicked: Qt.callLater(Qt.quit)
         }
     }

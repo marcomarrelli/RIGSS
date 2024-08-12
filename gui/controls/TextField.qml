@@ -38,6 +38,7 @@ C.TextField {
 
     font.pointSize: textfield.fontSize
     font.bold: textfield.bold
+    font.italic: textfield.placeholder !== "" && textfield.text === ""
     color: textfield.hovered && textfield.hoverEnabled && !textfield.focus ? textfield.highlightedColor : textfield.textColor
 
     opacity: textfield.placeholder === "" ? 1 : 0.75

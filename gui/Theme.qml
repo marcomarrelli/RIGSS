@@ -14,6 +14,7 @@ QtObject {
     property color dark: theme.getColorFromMode().dark
     property color border: theme.getColorFromMode().border
     property color highlight: theme.getColorFromMode().highlight
+    property color error: theme.getColorFromMode().error
 
     function getColorFromMode(mode = theme.mode) {
         switch(mode) {
@@ -23,7 +24,8 @@ QtObject {
                 "mid": "#C4C4C4",
                 "dark": "#9C9C9C",
                 "border": "#121212", // "#EDEDED"
-                "highlight": "#FFA652"
+                "highlight": "#FFA652",
+                "error": "#FF3333"
             }
             case Theme.Mode.Dark: return {
                 "text": "#EAEAEA",
@@ -31,7 +33,8 @@ QtObject {
                 "mid": "#3B3B3B",
                 "dark": "#222222",
                 "border": "#121212",
-                "highlight": "#FF8D21"
+                "highlight": "#FF8D21",
+                "error": "#FF3333"
             }
         }
     }
@@ -63,5 +66,6 @@ QtObject {
         theme.dark = theme.getColorFromMode().dark
         theme.border = theme.getColorFromMode().border
         theme.highlight = theme.getColorFromMode().highlight
+        theme.error = theme.getColorFromMode().error
     }
 }
