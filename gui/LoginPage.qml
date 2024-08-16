@@ -85,7 +85,8 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-
+                    loginPage.loggedSuccessfully()
+                    //rigss.userPrivilage = RIGSS.Privilage.NotLogged
                 }
             }
         }
@@ -116,14 +117,14 @@ Item {
 
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-            placeholder: "Insert Username"
+            placeholder: "Username"
         }
         Controls.TextField {
             id: loginPassword
 
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
-            placeholder: "Insert Password"
+            placeholder: "Password"
         }
         RowLayout {
             Layout.fillWidth: true
@@ -131,7 +132,7 @@ Item {
 
             Controls.Button {
                 Layout.preferredWidth: Utils.perc(registerBody.width, 50)-parent.spacing
-                Layout.preferredHeight: parent.height
+                Layout.preferredHeight: Utils.perc(registerBody.height, 10)
                 Layout.alignment: Qt.AlignLeft
 
                 iconCode: Utils.getIcon(0xE024)
@@ -146,10 +147,14 @@ Item {
             }
             Controls.Button {
                 Layout.preferredWidth: Utils.perc(registerBody.width, 50)-parent.spacing
-                Layout.preferredHeight: parent.height
+                Layout.preferredHeight: Utils.perc(registerBody.height, 10)
                 Layout.alignment: Qt.AlignRight
 
                 iconCode: Utils.getIcon(0xE428)
+                onClicked: {
+                    loginPage.loggedSuccessfully()
+                    //rigss.userPrivilage = RIGSS.Privilage.User
+                }
             }
         }
     }
@@ -239,7 +244,7 @@ Item {
 
             Controls.Button {
                 Layout.preferredWidth: Utils.perc(registerBody.width, 50)-(parent.spacing/2)
-                Layout.preferredHeight: parent.height
+                Layout.preferredHeight: Utils.perc(registerBody.height, 10)
                 Layout.alignment: Qt.AlignLeft
 
                 iconCode: Utils.getIcon(0xE024)
@@ -259,7 +264,7 @@ Item {
             }
             Controls.Button {
                 Layout.preferredWidth: Utils.perc(registerBody.width, 50)-(parent.spacing/2)
-                Layout.preferredHeight: parent.height
+                Layout.preferredHeight: Utils.perc(registerBody.height, 10)
                 Layout.alignment: Qt.AlignRight
 
                 iconCode: Utils.getIcon(0xEAFA)

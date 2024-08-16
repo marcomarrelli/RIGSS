@@ -15,14 +15,8 @@ import "../logic/utils.js" as Utils
 ApplicationWindow {
     id: rigss
 
-    property int userPrivilage: RIGSS.Privilage.NotLogged // TO DO: Change
-    readonly property string applicationTitle: { // TO DO: Logged In as Admin/User/Not Logged In
-        switch(rigss.userPrivilage) {
-            case RIGSS.Privilage.NotLogged: return qsTr("RIGSS [Not Logged In]")
-            case RIGSS.Privilage.User: return qsTr("RIGSS [Logged In as User]")
-            case RIGSS.Privilage.Admin: return qsTr("RIGSS [Logged In as Admin]")
-        }
-    }
+    property int userPrivilage: RIGSS.Privilage.NotLogged
+    property string applicationTitle: qsTr("RIGSS")
 
     minimumWidth: Utils.perc(Screen.width, 70)
     minimumHeight: Utils.perc(Screen.height, 70)
@@ -49,6 +43,10 @@ ApplicationWindow {
     StackView {
         id: stack
 
+        function setPrivilage(privilage) {
+            rigss.userPrivilage = privilage
+        }
+
         anchors.fill: parent
 
         Component.onCompleted: stack.push(mainPageWrapper, loginPageWrapper)
@@ -67,7 +65,17 @@ ApplicationWindow {
         LoginPage {
             id: loginPage            
         
-            onLoggedSuccessfully: stack.pop(StackView.Immediate)
+            onLoggedSuccessfully: {
+                stack.pop(StackView.Immediate)
+            }
+        }
+    }
+    
+    onUserPrivilageChanged: {
+        switch(rigss.userPrivilage) {
+            case RIGSS.Privilage.NotLogged: rigss.applicationTitle = qsTr("RIGSS [Not Logged In]"); break
+            case RIGSS.Privilage.User: rigss.applicationTitle = qsTr("RIGSS [Logged In as User]"); break
+            case RIGSS.Privilage.Admin: rigss.applicationTitle = qsTr("RIGSS [Logged In as Admin]"); break
         }
     }
 

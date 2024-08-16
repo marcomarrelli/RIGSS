@@ -11,109 +11,109 @@ DROP TABLE IF EXISTS Promozione;
 DROP TABLE IF EXISTS TipologiaPromozione;
 
 CREATE TABLE Bandiera (
-    Nome VARCHAR(31) NOT NULL,
-	Logo TEXT,
-	PRIMARY KEY (Nome)
+    nome VARCHAR(31) NOT NULL,
+	logo TEXT,
+	PRIMARY KEY (nome)
 );
 
 CREATE TABLE TipologiaCarburante (
-    Nome VARCHAR(31) NOT NULL,
-    Logo TEXT,
-    PRIMARY KEY (Nome)
+    nome VARCHAR(31) NOT NULL,
+    logo TEXT,
+    PRIMARY KEY (nome)
 );
 
 CREATE TABLE Distributore (
-    IDImpianto INTEGER NOT NULL,
-	Gestore VARCHAR(255) NOT NULL,
-    Bandiera VARCHAR(31) NOT NULL,
-    Tipologia VARCHAR(63) NOT NULL,
-    Nome VARCHAR(127) NOT NULL,
-	Via VARCHAR(127) NOT NULL,
-    NumeroCivico VARCHAR(15) NOT NULL,
-    CAP VARCHAR(5) NOT NULL,
-    Comune VARCHAR(63) NOT NULL,
-    Provincia VARCHAR(63) NOT NULL,
-	Latitudine REAL NOT NULL,
-    Longitudine REAL NOT NULL,
-	eSimulato BOOLEAN NOT NULL,
-	PRIMARY KEY (IDImpianto),
-    FOREIGN KEY (Bandiera) REFERENCES Bandiera(Nome)
+    idImpianto INTEGER NOT NULL,
+	gestore VARCHAR(255) NOT NULL,
+    bandiera VARCHAR(31) NOT NULL,
+    tipologia VARCHAR(63) NOT NULL,
+    nome VARCHAR(127) NOT NULL,
+	via VARCHAR(127) NOT NULL,
+    numeroCivico VARCHAR(15) NOT NULL,
+    cap VARCHAR(5) NOT NULL,
+    comune VARCHAR(63) NOT NULL,
+    provincia VARCHAR(63) NOT NULL,
+	latitudine REAL NOT NULL,
+    longitudine REAL NOT NULL,
+	simulato BOOLEAN NOT NULL,
+	PRIMARY KEY (idImpianto),
+    FOREIGN KEY (bandiera) REFERENCES Bandiera(nome)
 );
 
 CREATE TABLE Carburante (
-    IDImpianto INTEGER NOT NULL,
-	Nome VARCHAR(31) NOT NULL,
-    Prezzo DECIMAL(6, 3) NOT NULL,
-    eSelf BOOLEAN NOT NULL,
-    DataAggiornamento DATETIME NOT NULL,
-	PRIMARY KEY (IDImpianto, Nome, eSelf),
-    FOREIGN KEY (Nome) REFERENCES TipologiaCarburante(Nome)
+    idImpianto INTEGER NOT NULL,
+	nome VARCHAR(31) NOT NULL,
+    prezzo DECIMAL(6, 3) NOT NULL,
+    self BOOLEAN NOT NULL,
+    dataAggiornamento DATETIME NOT NULL,
+	PRIMARY KEY (idImpianto, nome, self),
+    FOREIGN KEY (nome) REFERENCES TipologiaCarburante(nome)
 );
 
 CREATE TABLE Utente (
-    Nickname VARCHAR(31) NOT NULL,
-    Nome VARCHAR(31) NOT NULL,
-    Cognome VARCHAR(31) NOT NULL,
-    DataNascita DATE NOT NULL,
-    Luogo VARCHAR(63) NOT NULL,
+    nickname VARCHAR(31) NOT NULL,
+    nome VARCHAR(31) NOT NULL,
+    cognome VARCHAR(31) NOT NULL,
+    dataNascita DATE NOT NULL,
+    luogo VARCHAR(63) NOT NULL,
     Password VARCHAR(15) NOT NULL,
-	PRIMARY KEY (Nickname)
+	PRIMARY KEY (nickname)
 );
 
 CREATE TABLE Valutazione (
-    IDValutazione INTEGER NOT NULL,
-	IDImpianto INTEGER NOT NULL,
-    IDUtente VARCHAR(31) NOT NULL,
-	Valutazione INTEGER NOT NULL,
-    Recensione VARCHAR(255),
-	PRIMARY KEY (IDValutazione),
-    FOREIGN KEY (IDImpianto) REFERENCES Distributore(IDImpianto),
-    FOREIGN KEY (IDUtente) REFERENCES Utente(Nickname),
-	CONSTRAINT CheckValutazione CHECK (Valutazione BETWEEN 0 AND 5)
+    idValutazione INTEGER NOT NULL,
+	idImpianto INTEGER NOT NULL,
+    idUtente VARCHAR(31) NOT NULL,
+	valutazione INTEGER NOT NULL,
+    recensione VARCHAR(255),
+	PRIMARY KEY (idValutazione),
+    FOREIGN KEY (idImpianto) REFERENCES Distributore(idImpianto),
+    FOREIGN KEY (idUtente) REFERENCES Utente(nickname),
+	CONSTRAINT CheckValutazione CHECK (valutazione BETWEEN 0 AND 5)
 );
 
 CREATE TABLE MetodoPagamento (
-    IDMetodoPagamento INTEGER NOT NULL,
-    Nome VARCHAR(31) NOT NULL,
-	PRIMARY KEY (IDMetodoPagamento)
+    idMetodoPagamento INTEGER NOT NULL,
+    nome VARCHAR(31) NOT NULL,
+	PRIMARY KEY (idMetodoPagamento)
 );
 
 CREATE TABLE Transazione (
-    IDTransazione INTEGER NOT NULL,
-	IDImpianto INTEGER NOT NULL,
-    IDUtente VARCHAR(31) NOT NULL,
-    MetodoPagamento INTEGER NOT NULL,
-	Quantita DECIMAL(5, 2) NOT NULL,
-    Tipologia VARCHAR(31) NOT NULL,
-    Servito BOOLEAN NOT NULL,
-    Spesa DECIMAL(6, 2) NOT NULL,
-    DataTransazione DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (IDTransazione),
-    FOREIGN KEY (IDImpianto) REFERENCES Distributore(IDImpianto),
-    FOREIGN KEY (IDUtente) REFERENCES Utente(Nickname),
-    FOREIGN KEY (MetodoPagamento) REFERENCES MetodoPagamento(IDMetodoPagamento)
+    idTransazione INTEGER NOT NULL,
+	idImpianto INTEGER NOT NULL,
+    idUtente VARCHAR(31) NOT NULL,
+    metodoPagamento INTEGER NOT NULL,
+	quantita DECIMAL(5, 2) NOT NULL,
+    tipologia VARCHAR(31) NOT NULL,
+    servito BOOLEAN NOT NULL,
+    spesa DECIMAL(6, 2) NOT NULL,
+    dataTransazione DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (idTransazione),
+    FOREIGN KEY (idImpianto) REFERENCES Distributore(idImpianto),
+    FOREIGN KEY (idUtente) REFERENCES Utente(nickname),
+    FOREIGN KEY (metodoPagamento) REFERENCES MetodoPagamento(idMetodoPagamento)
 );
 
 CREATE TABLE Fattura (
-    IDFattura INTEGER NOT NULL,
-	IDTransazione INTEGER NOT NULL,
-	Importo DECIMAL(6, 2) NOT NULL,
-    DataEmissione DATETIME NOT NULL,
-	PRIMARY KEY (IDFattura),
-    FOREIGN KEY (IDTransazione) REFERENCES Transazione(IDTransazione)
+    idFattura INTEGER NOT NULL,
+	idTransazione INTEGER NOT NULL,
+	importo DECIMAL(6, 2) NOT NULL,
+    dataEmissione DATETIME NOT NULL,
+	PRIMARY KEY (idFattura),
+    FOREIGN KEY (idTransazione) REFERENCES Transazione(idTransazione)
 );
 
 CREATE TABLE TipologiaPromozione (
-    IDTipologiaPromozione INTEGER NOT NULL,
-	Nome VARCHAR(31) NOT NULL,
-	PRIMARY KEY (IDTipologiaPromozione)
+    idTipologiaPromozione INTEGER NOT NULL,
+	nome VARCHAR(31) NOT NULL,
+	PRIMARY KEY (idTipologiaPromozione)
 );
 
 CREATE TABLE Promozione (
-    IDPromozione INTEGER NOT NULL,
-    IDTipologiaPromozione INTEGER NOT NULL,
-	Valore DECIMAL(5, 2) NOT NULL,
-	PRIMARY KEY (IDPromozione),
-    FOREIGN KEY (IDTipologiaPromozione) REFERENCES TipologiaPromozione(IDTipologiaPromozione),
-	CONSTRAINT CheckValore CHECK (Valore BETWEEN 0.00 AND 100.00)
+    idPromozione INTEGER NOT NULL,
+    idTipologiaPromozione INTEGER NOT NULL,
+	valore DECIMAL(5, 2) NOT NULL,
+	PRIMARY KEY (idPromozione),
+    FOREIGN KEY (idTipologiaPromozione) REFERENCES TipologiaPromozione(idTipologiaPromozione),
+	CONSTRAINT CheckValore CHECK (valore BETWEEN 0.00 AND 100.00)
 );

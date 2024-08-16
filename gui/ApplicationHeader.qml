@@ -48,7 +48,7 @@ ToolBar {
             Layout.preferredWidth: Utils.perc(parent.width, 60)-parent.spacing
             Layout.fillHeight: true
 
-            text: "RIGSS"
+            text: parentWindow.applicationTitle
             bold: true
         }
         Controls.Button { 

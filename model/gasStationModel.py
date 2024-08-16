@@ -1,16 +1,16 @@
 from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot
 from PyQt5.QtSql import QSqlQuery
 
-from baseModel import BaseModel
+from .baseModel import BaseModel
 
-class GasStation(QObject):
+class GasStations(QObject):
     modelChanged = pyqtSignal(QObject)
     filterChanged = pyqtSignal(str)
 
     def __init__(self, parent: QObject=None) -> None:
         super().__init__(parent)
         
-        self._model = ClientsModel()
+        self._model = GasStationsModel()
         self._filter = ""
         self.filterChanged.connect(self.refresh)
 
@@ -29,55 +29,17 @@ class GasStation(QObject):
 
     @pyqtSlot()
     def refresh(self):
-        self._model.setQuery("""SELECT idcliente, nome, cognome, codice_fiscale 
-                            FROM public.clienti
-                            WHERE LOWER(nome) LIKE '""" + self._filter + """%' OR LOWER(cognome) LIKE '""" + self._filter + """%'                       
-                        """)
+        self._model.setQuery("""
+            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, eSimulato
+            FROM Distributore
+        """)
+        # where NOME like bla bla bla....
+        # or via like bla bla bla bla bla
 
-    @pyqtSlot(str, str, str, str, str, result=bool)
-    def addClient(self, name: str, surname: str, taxcode: str, cellnum: str, email: str):
-        query = QSqlQuery()
-        query.prepare("""INSERT INTO public.clienti
-                        (cognome, nome, codice_fiscale, telefono, email)
-                        VALUES(:surname, :name, :taxcode, :cellnum, :email)
-                    """)
-
-        if not name or not surname or not taxcode or not cellnum or not email:
-            return False
-
-        query.bindValue(":surname", surname)
-        query.bindValue(":name", name)
-        query.bindValue(":taxcode", taxcode)
-        query.bindValue(":cellnum", cellnum)
-        query.bindValue(":email", email)
-
-        done = query.exec()
-        return done
-
-    @pyqtSlot(str, str, str, str, str, str)
-    def addClientComp(self, name: str, surname: str, taxcode: str, cellnum: str, email: str, companyName: str):
-        query = QSqlQuery()
-        query.prepare("""INSERT INTO public.clienti
-                        (cognome, nome, codice_fiscale, telefono, email, nome_azienda)
-                        VALUES(:surname, :name, :taxcode, :cellnum, :email, :company)
-                    """)
-                    
-        if not name or not surname or not taxcode:
-            return False
-        
-        query.bindValue(":surname", surname)
-        query.bindValue(":name", name)
-        query.bindValue(":taxcode", taxcode)
-        query.bindValue(":cellnum", cellnum)
-        query.bindValue(":email", email)
-        query.bindValue(":company", companyName)
-
-        done = query.exec()
-        return done
-    
-
-class ClientsModel(BaseModel):
+class GasStationsModel(BaseModel):
     def __init__(self, parent:QObject=None) -> None:
-        super(ClientsModel, self).__init__(["idcliente", "nome", "cognome", "codice_fiscale"])
-        super().setQuery("""SELECT idcliente, nome, cognome, codice_fiscale 
-                            FROM public.clienti""")
+        super(GasStationsModel, self).__init__(["idImpianto", "gestore", "bandiera", "tipologia", "nome", "via", "numeroCivico", "cap", "comune", "provincia", "latitudine", "longitudine", "eSimulato"])
+        super().setQuery("""
+            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, eSimulato
+            FROM Distributore
+        """)

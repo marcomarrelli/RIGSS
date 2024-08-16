@@ -8,6 +8,8 @@ import QtGraphicalEffects 1.12
 
 import "../logic/utils.js" as Utils
 
+import GasStations 1.0
+
 Map {
     id: map
 
@@ -51,6 +53,27 @@ Map {
         PluginParameter { name: "osm.mapping.highdpi_tiles"; value: "true" }
     }
 
+    // mapItems:
+    MapItemView {
+        model: gasStationsData.model
+        delegate: MapQuickItem {
+            property real itemSize: (map.zoomLevel*map.zoomLevel)/map.minZoom
+
+            coordinate: QtPositioning.coordinate(model.latitudine, model.longitudine)
+            sourceItem: Rectangle {
+                width: itemSize; height: itemSize
+                radius: width/2; color: "orange"
+            }
+        }
+    }
+    
+    //gasStationsData.model.data(gasStationsData.model.index(0, 10), 0)
+    //{
+    //    var temp
+    //    Object.keys(gasStationsData.model).forEach(e => temp += (e + "\n"))
+    //    return temp
+    //}
+
     DragHandler {
         id: drag
 
@@ -66,5 +89,9 @@ Map {
 
         rotationScale: 1/120
         onWheel: (wheel) => map.zoom(wheel)
+    }
+
+    GasStations {
+        id: gasStationsData
     }
 }

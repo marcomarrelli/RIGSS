@@ -81,6 +81,8 @@ def addFixedValues():
     q.exec_('INSERT INTO MetodoPagamento(Nome) VALUES ("Carta di Debito");')
     q.exec_('INSERT INTO MetodoPagamento(Nome) VALUES ("Carta di Credito");')
 
+    q.exec_('INSERT INTO Distributore(IDImpianto, Gestore, Bandiera, Tipologia, Nome, Via, NumeroCivico, CAP, Comune, Provincia, Latitudine, Longitudine, eSimulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
+
 def initializeDatabase():
     isFirstInitialization = not os.path.exists(DATABASE_NAME)
     

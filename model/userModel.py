@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot
 from PyQt5.QtSql import QSqlQuery
 
-from baseModel import BaseModel
+from .baseModel import BaseModel
 
 class UsersModel(BaseModel):
     def __init__(self, parent:QObject=None) -> None:
@@ -37,7 +37,7 @@ class Users(QObject):
     def refresh(self) -> None:
         self._model.setQuery("""SELECT idcliente, nome, cognome, codice_fiscale 
                             FROM public.clienti
-                            WHERE LOWER(nome) LIKE '""" + self._filter + """%' OR LOWER(cognome) LIKE '""" + self._filter + """%'                       
+                            WHERE LOWER(nome) LIKE '""" + self._filter + """%' OR LOWER(cognome) LIKE '""" + self._filter + """%'
                         """)
 
     @pyqtSlot(str, str, str, str, str, result=bool)
