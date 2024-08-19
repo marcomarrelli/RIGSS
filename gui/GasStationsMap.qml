@@ -6,6 +6,7 @@ import QtPositioning 5.15
 
 import QtGraphicalEffects 1.12
 
+import "./controls" as Controls
 import "../logic/utils.js" as Utils
 
 import GasStations 1.0
@@ -15,8 +16,8 @@ Map {
 
     property real mapRadius: 25
 
-    readonly property real minZoom: 6.0
-    readonly property real maxZoom: 17.0
+    readonly property real minZoom: 6.25
+    readonly property real maxZoom: 16.75
 
     readonly property var centerCoordinates: QtPositioning.coordinate(41.9027835, 12.4963655)
     
@@ -30,6 +31,7 @@ Map {
         else map.zoomLevel = newZoom
     }
 
+    activeMapType: map.supportedMapTypes[map.supportedMapTypes.length-1]
     width: 500
     height: 500
 
@@ -50,29 +52,30 @@ Map {
 
     plugin: Plugin {
         name: "osm"
+
         PluginParameter { name: "osm.mapping.highdpi_tiles"; value: "true" }
+        PluginParameter { name: "osm.mapping.providersrepository.disabled"; value: "true" }
+        PluginParameter { name: "osm.mapping.providersrepository.address"; value: "http://maps-redirect.qt.io/osm/5.8/" }
+        PluginParameter { name: "osm.mapping.custom.host"; value: "https://tile.openstreetmap.org/" }
     }
 
-    // mapItems:
     MapItemView {
         model: gasStationsData.model
         delegate: MapQuickItem {
-            property real itemSize: (map.zoomLevel*map.zoomLevel)/map.minZoom
+            property real itemSize: map.zoomLevel*(map.maxZoom/map.minZoom)*0.75
+
+            anchorPoint.x: itemSize/2
+            anchorPoint.y: itemSize/2
 
             coordinate: QtPositioning.coordinate(model.latitudine, model.longitudine)
-            sourceItem: Rectangle {
-                width: itemSize; height: itemSize
-                radius: width/2; color: "orange"
+            sourceItem: GasStationMapItem {
+                id: __gasStationMapItem
+
+                simulated: model.simulato
+                size: itemSize
             }
         }
     }
-    
-    //gasStationsData.model.data(gasStationsData.model.index(0, 10), 0)
-    //{
-    //    var temp
-    //    Object.keys(gasStationsData.model).forEach(e => temp += (e + "\n"))
-    //    return temp
-    //}
 
     DragHandler {
         id: drag

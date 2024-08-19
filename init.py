@@ -39,8 +39,8 @@ def create():
                 if not q.exec_(query.strip()): print(f"Failed to execute query. {q.lastError().text()}.")
 
 def addNameLogo(query: QSqlQuery, tabella: str, nameValue: str, logoString: str):
-    if tabella == "Carburante": query.prepare('INSERT INTO TipologiaCarburante(Nome, Logo) VALUES (?, ?);')
-    elif tabella == "Bandiera": query.prepare('INSERT INTO Bandiera(Nome, Logo) VALUES (?, ?);')
+    if tabella == "Carburante": query.prepare('INSERT INTO TipologiaCarburante(nome, logo) VALUES (?, ?);')
+    elif tabella == "Bandiera": query.prepare('INSERT INTO Bandiera(nome, logo) VALUES (?, ?);')
     
     query.addBindValue(nameValue)
     query.addBindValue(logoString)
@@ -74,14 +74,14 @@ def addFixedValues():
     addNameLogo(q, "Bandiera", "Api-Ip", agiIp)
     addNameLogo(q, "Bandiera", "Tamoil", tamoil)
 
-    q.exec_('INSERT INTO TipologiaPromozione(Nome) VALUES ("Sconto");')
-    q.exec_('INSERT INTO TipologiaPromozione(Nome) VALUES ("Cashback");')
+    q.exec_('INSERT INTO TipologiaPromozione(nome) VALUES ("Sconto");')
+    q.exec_('INSERT INTO TipologiaPromozione(nome) VALUES ("Cashback");')
 
-    q.exec_('INSERT INTO MetodoPagamento(Nome) VALUES ("Contanti");')
-    q.exec_('INSERT INTO MetodoPagamento(Nome) VALUES ("Carta di Debito");')
-    q.exec_('INSERT INTO MetodoPagamento(Nome) VALUES ("Carta di Credito");')
+    q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Contanti");')
+    q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Debito");')
+    q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Credito");')
 
-    q.exec_('INSERT INTO Distributore(IDImpianto, Gestore, Bandiera, Tipologia, Nome, Via, NumeroCivico, CAP, Comune, Provincia, Latitudine, Longitudine, eSimulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
+    q.exec_('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
 
 def initializeDatabase():
     isFirstInitialization = not os.path.exists(DATABASE_NAME)
