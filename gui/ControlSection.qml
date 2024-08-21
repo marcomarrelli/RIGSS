@@ -16,13 +16,15 @@ Item {
     property color backgroundColor: Theme.mid
     property real backgroundRadius: 25
 
-    property var gasStationsModel
+    property var gasStations
 
     property int selectedPanel: 0
 
-    function openGasStation(gasStation = undefined) {
-        if(!Utils.exists(gasStation)) return
-    }
+    signal gasStationSelected(gasStation: var)
+
+    //function openGasStation(gasStation = undefined) {
+    //    if(!Utils.exists(gasStation)) return
+    //}
 
     Rectangle {
         id: background
@@ -158,7 +160,12 @@ Item {
             width: body.width
             height: Utils.perc(body.height, 7.5)
 
-            placeholder: "Search by Name"
+            placeholder: "Search by Name or Place"
+
+            onTextChanged: {
+                controlSection.gasStations.filter = text
+                controlSection.gasStations.refresh()
+            }
         }
         ListView {        
             id: gasStationView
@@ -170,12 +177,19 @@ Item {
             reuseItems: true
             clip: true
 
-            model: controlSection.gasStationsModel
+            model: controlSection.gasStations.model
             delegate: GasStationCard {
                 width: gasStationView.width
                 height: Utils.perc(gasStationView.height, 22.5)
 
                 gasStation: model
+                onClicked: controlSection.gasStationSelected(this.gasStation)
+            }
+
+            onModelChanged: {
+                gasStationView.positionViewAtBeginning()
+                gasStationView.forceLayout()
+                gasStationView.forceActiveFocus()
             }
         }
     }

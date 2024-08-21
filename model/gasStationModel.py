@@ -29,17 +29,18 @@ class GasStations(QObject):
 
     @pyqtSlot()
     def refresh(self):
-        self._model.setQuery("""
+        self._model.setQuery(f"""
             SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
             FROM Distributore
+            WHERE LOWER(nome) LIKE '{self._filter}%'
+            OR LOWER(comune) LIKE '{self._filter}%'
+            OR LOWER(provincia) LIKE '{self._filter}%'
         """)
-        # where NOME like bla bla bla....
-        # or via like bla bla bla bla bla
 
 class GasStationsModel(BaseModel):
     def __init__(self, parent:QObject=None) -> None:
         super(GasStationsModel, self).__init__(["idImpianto", "gestore", "bandiera", "tipologia", "nome", "via", "cap", "comune", "provincia", "latitudine", "longitudine", "simulato"])
         super().setQuery("""
             SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
-            FROM Distributore
+            FROM Distributore;
         """)

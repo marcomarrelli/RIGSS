@@ -17,7 +17,7 @@ Map {
     readonly property real minZoom: 6.25
     readonly property real maxZoom: 16.75
 
-    property var gasStationsModel
+    property var gasStations
 
     readonly property var centerCoordinates: QtPositioning.coordinate(41.9027835, 12.4963655)
     
@@ -31,6 +31,12 @@ Map {
 
         if((newZoom < map.minimumZoomLevel) || (newZoom > map.maximumZoomLevel)) return
         else map.zoomLevel = newZoom
+    }
+
+    function goTo(gasStation = undefined) {
+        if(!gasStation) return map.centerCoordinates
+
+        map.center = QtPositioning.coordinate(gasStation.latitudine, gasStation.longitudine)
     }
 
     activeMapType: map.supportedMapTypes[map.supportedMapTypes.length-1]
@@ -62,7 +68,7 @@ Map {
     }
 
     MapItemView {
-        model: map.gasStationsModel
+        model: map.gasStations.model
         delegate: MapQuickItem {
             property real itemSize: map.zoomLevel*(map.maxZoom/map.minZoom)*0.75
 

@@ -115,6 +115,9 @@ def addGasStationsFromFile(filepath="./model/resources/anagrafica_impianti_attiv
                 print(f"Coordinate non Valide! Carico Prossimo Distributore...")
                 continue
 
+            cap = temp[5][-5:]
+            if not cap.isnumeric(): cap = "N/A"
+
             q.prepare('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);')
 
             q.addBindValue(temp[0]) # ID
@@ -123,7 +126,7 @@ def addGasStationsFromFile(filepath="./model/resources/anagrafica_impianti_attiv
             q.addBindValue(temp[3]) # Tipologia
             q.addBindValue(temp[4]) # Nome
             q.addBindValue(temp[5]) # Via
-            q.addBindValue(temp[5][-5:]) # CAP: gli ultimi 5 caratteri del parametro 'via'
+            q.addBindValue(cap) # CAP: gli ultimi 5 caratteri del parametro 'via'
             q.addBindValue(temp[6]) # Comune
             q.addBindValue(temp[7]) # Provincia
             q.addBindValue(temp[8])

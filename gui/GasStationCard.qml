@@ -18,6 +18,8 @@ Item {
     property color backgroundColor: Theme.light
     property real radius: 12.5
 
+    signal clicked(gasStation: var)
+
     width: 100
     height: 50
 
@@ -26,35 +28,114 @@ Item {
 
         anchors.fill: parent
 
+        border {
+            width: 1
+            color: Theme.border
+        }
         radius: card.radius
         color: card.backgroundColor
     }
-    Controls.Label {
-        id: cardName
 
-        width: parent.width
-        height: Utils.perc(parent.height, 15)
+    Rectangle { // IMAGE
+        id: logo
+
+        height: Utils.perc(parent.height, 60)
+        width: Utils.perc(parent.height, 60)
+
+        anchors {
+            left: parent.left; leftMargin: 5
+            bottom: parent.bottom; bottomMargin: 7
+        }
+    }
+    Controls.Label {
+        id: name
+
+        height: Utils.perc(parent.height, 12.5)
         anchors {
             top: parent.top; topMargin: 5
             left: parent.left; leftMargin: 5
+            right: parent.right; rightMargin: 5
         }
 
-        text: gasStation ? gasStation.nome : "N/A"
+        text: gasStation ? gasStation.nome ?? "N/A" : "N/A"
 
         font {
-            pointSize: 10
+            pointSize: -1
+            pixelSize: height
             bold: true
         }
         horizontalAlignment: Text.AlignLeft
     }
-    Rectangle {
-        // IMAGE
-        height: Utils.perc(parent.height, 75)
-        width: Utils.perc(parent.height, 75)
+    Controls.Label {
+        id: street
 
+        height: Utils.perc(parent.height, 9)
         anchors {
-            bottom: parent.bottom; bottomMargin: 2.5
+            top: name.bottom; topMargin: 5
             left: parent.left; leftMargin: 5
+            right: parent.right; rightMargin: 5
         }
+
+        text: gasStation ? gasStation.via.slice(0, -6) ?? "N/A" : "N/A"
+        
+        font {
+            pointSize: -1
+            pixelSize: height
+        }
+        fontSizeMode: Text.Fit
+        horizontalAlignment: Text.AlignLeft
+    }
+    Controls.Label {
+        id: position
+
+        height: Utils.perc(parent.height, 9)
+        anchors {
+            top: logo.top; topMargin: 1
+            left: logo.right; leftMargin: 5
+            right: parent.right; rightMargin: 5
+        }
+
+        text: gasStation ? ((gasStation.latitudine.toFixed(5).padStart(8, '0') ?? "N/A") + " - " + (gasStation.longitudine.toFixed(5).padStart(8, '0') ?? "N/A")) : "N/A - N/A"
+
+        font {
+            pointSize: -1
+            pixelSize: height
+        }
+        fontSizeMode: Text.Fit
+        horizontalAlignment: Text.AlignLeft
+    }
+    Controls.Label {
+        id: place
+
+        height: Utils.perc(parent.height, 9)
+        anchors {
+            top: position.bottom; topMargin: 5
+            left: logo.right; leftMargin: 5
+            right: parent.right; rightMargin: 5
+        }
+
+        text: gasStation ? ((gasStation.comune ?? "N/A") + ", " + (gasStation.provincia ?? "N/A") + ", " + (gasStation.cap ?? "N/A")) : "N/A, N/A, N/A"
+
+        font {
+            pointSize: -1
+            pixelSize: height
+        }
+        fontSizeMode: Text.Fit
+        horizontalAlignment: Text.AlignLeft
+    }
+
+    /*
+    { CHECK SIMULAZIONE }
+    */
+
+    MouseArea {
+        id: handler
+
+        anchors.fill: parent
+
+        hoverEnabled: true
+        onClicked: card.clicked(card.gasStation)
+        onEntered: background.border.color = Theme.highlight
+        onExited: background.border.color = Theme.border
     }
 }

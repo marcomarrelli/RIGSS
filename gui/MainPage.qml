@@ -24,7 +24,7 @@ Item {
 
         mapRadius: mainPage.radius
 
-        gasStationsModel: gasStationsData.model
+        gasStations: gasStationsData
     }
 
     ControlSection {
@@ -39,7 +39,8 @@ Item {
 
         backgroundRadius: mainPage.radius
 
-        gasStationsModel: gasStationsData.model
+        gasStations: gasStationsData
+        onGasStationSelected: (gasStation) => gasStationMap.goTo(gasStation)
     }
 
     GasStations { id: gasStationsData }
