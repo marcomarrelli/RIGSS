@@ -1,5 +1,6 @@
 import sys
 import os
+import random
 
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
@@ -10,6 +11,7 @@ DATABASE_NAME = "RIGSS.sqlite3"
 
 USERNAME = "root"
 PASSWORD = "1234" # Top Security Level
+
 
 def connect():
     database = QSqlDatabase.addDatabase(DATABASE_TYPE)
@@ -29,6 +31,7 @@ def connect():
 
     return True
 
+
 def create():
     with open('init.sql', 'r') as file:
         script = file.read()
@@ -38,6 +41,7 @@ def create():
                 q = QSqlQuery()
                 if not q.exec_(query.strip()): print(f"Failed to execute query. {q.lastError().text()}.")
 
+
 def addNameLogo(query: QSqlQuery, tabella: str, nameValue: str, logoString: str):
     if tabella == "Carburante": query.prepare('INSERT INTO TipologiaCarburante(nome, logo) VALUES (?, ?);')
     elif tabella == "Bandiera": query.prepare('INSERT INTO Bandiera(nome, logo) VALUES (?, ?);')
@@ -46,6 +50,7 @@ def addNameLogo(query: QSqlQuery, tabella: str, nameValue: str, logoString: str)
     query.addBindValue(logoString)
     
     return query.exec_()
+
 
 def addFixedValues():
     q = QSqlQuery()
@@ -81,7 +86,56 @@ def addFixedValues():
     q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Debito");')
     q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Credito");')
 
-    q.exec_('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
+    # q.exec_('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
+
+
+def addGasStationsFromFile(filepath="./model/resources/anagrafica_impianti_attivi.csv", n=25):
+    q = QSqlQuery()
+    
+    flags = ["Q8", "Esso", "Agip Eni", "Pompe Bianche", "Api-Ip", "Tamoil"]
+
+    try:
+        with open(filepath, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+
+        if len(lines) < n:
+            return
+
+        lines = lines[2:]   # Rimuovo le prime due righe di commento del file csv
+        rl = random.sample(lines, n)
+
+        for i, r in enumerate(rl, start=1):
+            temp = r.strip().split(';')
+            
+            if temp[2] not in flags:
+                print(f"Bandiera '{temp[2]}' non Valida! Carico Prossimo Distributore...")
+                continue
+
+            if temp[8] == '' or temp[9] == '':
+                print(f"Coordinate non Valide! Carico Prossimo Distributore...")
+                continue
+
+            q.prepare('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);')
+
+            q.addBindValue(temp[0]) # ID
+            q.addBindValue(temp[1]) # Gestore
+            q.addBindValue(temp[2]) # Bandiera
+            q.addBindValue(temp[3]) # Tipologia
+            q.addBindValue(temp[4]) # Nome
+            q.addBindValue(temp[5]) # Via
+            q.addBindValue(temp[5][-5:]) # CAP: gli ultimi 5 caratteri del parametro 'via'
+            q.addBindValue(temp[6]) # Comune
+            q.addBindValue(temp[7]) # Provincia
+            q.addBindValue(temp[8])
+            q.addBindValue(temp[9])
+            q.addBindValue(False) # simulato = false
+            
+            q.exec_()
+
+    except FileNotFoundError:
+        print(f"Il file '{filepath}' non è stato trovato.")
+        return
+
 
 def initializeDatabase():
     isFirstInitialization = not os.path.exists(DATABASE_NAME)
@@ -91,3 +145,4 @@ def initializeDatabase():
 
     create()
     addFixedValues()
+    addGasStationsFromFile()

@@ -30,7 +30,7 @@ class GasStations(QObject):
     @pyqtSlot()
     def refresh(self):
         self._model.setQuery("""
-            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato
+            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
             FROM Distributore
         """)
         # where NOME like bla bla bla....
@@ -38,8 +38,8 @@ class GasStations(QObject):
 
 class GasStationsModel(BaseModel):
     def __init__(self, parent:QObject=None) -> None:
-        super(GasStationsModel, self).__init__(["idImpianto", "gestore", "bandiera", "tipologia", "nome", "via", "numeroCivico", "cap", "comune", "provincia", "latitudine", "longitudine", "simulato"])
+        super(GasStationsModel, self).__init__(["idImpianto", "gestore", "bandiera", "tipologia", "nome", "via", "cap", "comune", "provincia", "latitudine", "longitudine", "simulato"])
         super().setQuery("""
-            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato
+            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
             FROM Distributore
         """)
