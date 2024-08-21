@@ -38,9 +38,23 @@ class GasStations(QObject):
         """)
 
 class GasStationsModel(BaseModel):
-    def __init__(self, parent:QObject=None) -> None:
+    def __init__(self, parent: QObject = None) -> None:
         super(GasStationsModel, self).__init__(["idImpianto", "gestore", "bandiera", "tipologia", "nome", "via", "cap", "comune", "provincia", "latitudine", "longitudine", "simulato"])
         super().setQuery("""
             SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
             FROM Distributore;
         """)
+
+    @pyqtSlot(str, result=str)
+    def getLogo(self, bandiera: str) -> str:
+        query = QSqlQuery()
+        query.prepare("""
+            SELECT logo
+            FROM Bandiera
+            WHERE Bandiera.nome = :bandiera;
+        """)
+        query.bindValue(":bandiera", bandiera)
+        query.exec_()
+        
+        return query.value(0) if query.next() else ""
+        

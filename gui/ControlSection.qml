@@ -183,6 +183,7 @@ Item {
                 height: Utils.perc(gasStationView.height, 22.5)
 
                 gasStation: model
+                gasStationData: controlSection.gasStations.model
                 onClicked: controlSection.gasStationSelected(this.gasStation)
             }
 

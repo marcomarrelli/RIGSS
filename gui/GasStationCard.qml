@@ -13,6 +13,7 @@ Item {
     id: card
 
     property var gasStation
+    property var gasStationData
 
     property color textColor: Theme.text
     property color backgroundColor: Theme.light
@@ -36,7 +37,7 @@ Item {
         color: card.backgroundColor
     }
 
-    Rectangle { // IMAGE
+    Image { // IMAGE
         id: logo
 
         height: Utils.perc(parent.height, 60)
@@ -46,6 +47,8 @@ Item {
             left: parent.left; leftMargin: 5
             bottom: parent.bottom; bottomMargin: 7
         }
+
+        source: "data:image/svg+xml;utf8," + card.gasStationData.getLogo(card.gasStation.bandiera)
     }
     Controls.Label {
         id: name
@@ -91,7 +94,7 @@ Item {
         height: Utils.perc(parent.height, 9)
         anchors {
             top: logo.top; topMargin: 1
-            left: logo.right; leftMargin: 5
+            left: logo.right; leftMargin: 10
             right: parent.right; rightMargin: 5
         }
 
@@ -109,12 +112,31 @@ Item {
 
         height: Utils.perc(parent.height, 9)
         anchors {
-            top: position.bottom; topMargin: 5
-            left: logo.right; leftMargin: 5
+            top: position.bottom; topMargin: 7
+            left: logo.right; leftMargin: 10
             right: parent.right; rightMargin: 5
         }
 
         text: gasStation ? ((gasStation.comune ?? "N/A") + ", " + (gasStation.provincia ?? "N/A") + ", " + (gasStation.cap ?? "N/A")) : "N/A, N/A, N/A"
+
+        font {
+            pointSize: -1
+            pixelSize: height
+        }
+        fontSizeMode: Text.Fit
+        horizontalAlignment: Text.AlignLeft
+    }
+    Controls.Label {
+        id: type
+
+        height: Utils.perc(parent.height, 9)
+        anchors {
+            top: place.bottom; topMargin: 7
+            left: logo.right; leftMargin: 10
+            right: parent.right; rightMargin: 5
+        }
+
+        text: gasStation ? gasStation.bandiera ?? "N/A" : "N/A"
 
         font {
             pointSize: -1
