@@ -37,7 +37,7 @@ Item {
         text: Utils.getIcon(0xE318)
     }
     MouseArea {
-        id: handler
+        anchors.fill: parent
 
         onClicked: gasStation.clicked()
     }

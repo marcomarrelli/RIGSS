@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import ApplicationSettings 1.0
+import GasStations 1.0
 
 import "./controls" as Controls
 import "../logic/utils.js" as Utils
@@ -22,6 +23,8 @@ Item {
         }
 
         mapRadius: mainPage.radius
+
+        gasStationsModel: gasStationsData.model
     }
 
     ControlSection {
@@ -35,5 +38,9 @@ Item {
         }
 
         backgroundRadius: mainPage.radius
+
+        gasStationsModel: gasStationsData.model
     }
+
+    GasStations { id: gasStationsData }
 }

@@ -9,8 +9,6 @@ import QtGraphicalEffects 1.12
 import "./controls" as Controls
 import "../logic/utils.js" as Utils
 
-import GasStations 1.0
-
 Map {
     id: map
 
@@ -19,8 +17,12 @@ Map {
     readonly property real minZoom: 6.25
     readonly property real maxZoom: 16.75
 
+    property var gasStationsModel
+
     readonly property var centerCoordinates: QtPositioning.coordinate(41.9027835, 12.4963655)
     
+    signal gasStationSelected(gasStation: var)
+
     function zoom(wheel) {
         if(!Utils.existsEvery(map, wheel)) return
         if(!Utils.existsEvery(map.zoomLevel, map.minimumZoomLevel, map.maximumZoomLevel)) return
@@ -60,7 +62,7 @@ Map {
     }
 
     MapItemView {
-        model: gasStationsData.model
+        model: map.gasStationsModel
         delegate: MapQuickItem {
             property real itemSize: map.zoomLevel*(map.maxZoom/map.minZoom)*0.75
 
@@ -73,6 +75,8 @@ Map {
 
                 simulated: model.simulato
                 size: itemSize
+
+                //onClicked: TO DO
             }
         }
     }
@@ -92,9 +96,5 @@ Map {
 
         rotationScale: 1/120
         onWheel: (wheel) => map.zoom(wheel)
-    }
-
-    GasStations {
-        id: gasStationsData
     }
 }

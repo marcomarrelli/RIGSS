@@ -16,7 +16,13 @@ Item {
     property color backgroundColor: Theme.mid
     property real backgroundRadius: 25
 
+    property var gasStationsModel
+
     property int selectedPanel: 0
+
+    function openGasStation(gasStation = undefined) {
+        if(!Utils.exists(gasStation)) return
+    }
 
     Rectangle {
         id: background
@@ -69,8 +75,8 @@ Item {
             onClicked: {
                 switch(button.text) {
                     case "Gas Stations": body.model = gasStationModel; return
+                    case "Advanced": body.model = undefined; return
                     case "Statistics": body.model = statisticsModel; return
-                    case "User Panel": body.model = undefined; return
                     default: return
                 }
             }
@@ -97,14 +103,14 @@ Item {
                 Layout.fillWidth: true
                 checkable: true
                 checked: false
-                text: "Statistics"
+                text: "Advanced"
             }
             Controls.Button {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 checkable: true
                 checked: false
-                text: "User Panel"
+                text: "Statistics"
             }
         }
 
@@ -134,6 +140,7 @@ Item {
             id: bodyView
         
             spacing: 5
+            reuseItems: true
             onModelChanged: {
                 bodyView.positionViewAtBeginning()
                 bodyView.forceLayout()
@@ -153,7 +160,24 @@ Item {
 
             placeholder: "Search by Name"
         }
-        // Controls.Label { text: "Filter by Name" }
+        ListView {        
+            id: gasStationView
+
+            width: body.width
+            height: Utils.perc(body.height, 87.5)
+            
+            spacing: 5
+            reuseItems: true
+            clip: true
+
+            model: controlSection.gasStationsModel
+            delegate: GasStationCard {
+                width: gasStationView.width
+                height: Utils.perc(gasStationView.height, 22.5)
+
+                gasStation: model
+            }
+        }
     }
 
     ObjectModel {
