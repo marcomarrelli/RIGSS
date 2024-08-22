@@ -2,6 +2,8 @@ import sys
 import os
 import random
 
+from pathlib import Path
+
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 DATABASE_TYPE = "QSQLITE"
@@ -11,6 +13,8 @@ DATABASE_NAME = "RIGSS.sqlite3"
 
 USERNAME = "root"
 PASSWORD = "1234" # Top Security Level
+
+CURRENT_DIRECTORY = Path(__file__).resolve().parent
 
 
 def connect():
@@ -33,13 +37,17 @@ def connect():
 
 
 def create():
-    with open('init.sql', 'r') as file:
-        script = file.read()
-        queries = script.split(';')
-        for query in queries:
-            if query.strip():
-                q = QSqlQuery()
-                if not q.exec_(query.strip()): print(f"Failed to execute query. {q.lastError().text()}.")
+    try:
+        with open(os.fspath(CURRENT_DIRECTORY / "init.sql"), 'r') as file:
+            script = file.read()
+            queries = script.split(';')
+            for query in queries:
+                if query.strip():
+                    q = QSqlQuery()
+                    if not q.exec_(query.strip()): print(f"Failed to execute query. {q.lastError().text()}.")
+    except FileNotFoundError as e:
+        print(f"Fatal Error: Cannot Initialize Database '{DATABASE_NAME}'.")
+        exit(-1)
 
 
 def addNameLogo(query: QSqlQuery, tabella: str, nameValue: str, logoString: str):
@@ -55,17 +63,17 @@ def addNameLogo(query: QSqlQuery, tabella: str, nameValue: str, logoString: str)
 def addFixedValues():
     q = QSqlQuery()
 
-    with open("./gui/resources/benzina.svg", 'r') as file: benzina = file.read() or ""
-    with open("./gui/resources/diesel.svg", 'r') as file: gasolio = file.read() or ""
-    with open("./gui/resources/metano.svg", 'r') as file: metano = file.read() or ""
-    with open("./gui/resources/gpl.svg", 'r') as file: gpl = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "benzina.svg"), 'r') as file: benzina = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "diesel.svg"), 'r') as file: gasolio = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "metano.svg"), 'r') as file: metano = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "gpl.svg"), 'r') as file: gpl = file.read() or ""
 
-    with open("./gui/resources/q8.svg", 'r') as file: q8 = file.read() or ""
-    with open("./gui/resources/esso.svg", 'r') as file: esso = file.read() or ""
-    with open("./gui/resources/agipEni.svg", 'r') as file: agipEni = file.read() or ""
-    with open("./gui/resources/pompeBianche.svg", 'r') as file: pompeBianche = file.read() or ""
-    with open("./gui/resources/agiIp.svg", 'r') as file: agiIp = file.read() or ""
-    with open("./gui/resources/tamoil.svg", 'r') as file: tamoil = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "q8.svg"), 'r') as file: q8 = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "esso.svg"), 'r') as file: esso = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "agipEni.svg"), 'r') as file: agipEni = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "pompeBianche.svg"), 'r') as file: pompeBianche = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "agiIp.svg"), 'r') as file: agiIp = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "tamoil.svg"), 'r') as file: tamoil = file.read() or ""
 
     addNameLogo(q, "Carburante", "Benzina", benzina)
     addNameLogo(q, "Carburante", "Gasolio", gasolio)
@@ -89,7 +97,7 @@ def addFixedValues():
     # q.exec_('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
 
 
-def addGasStationsFromFile(filepath="./model/resources/anagrafica_impianti_attivi.csv", n=25):
+def addGasStationsFromFile(filepath=os.fspath(CURRENT_DIRECTORY / "model" / "resources" / "anagrafica_impianti_attivi.csv"), n=25):
     q = QSqlQuery()
     
     flags = ["Q8", "Esso", "Agip Eni", "Pompe Bianche", "Api-Ip", "Tamoil"]
