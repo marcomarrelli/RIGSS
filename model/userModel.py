@@ -72,8 +72,8 @@ class Users(QObject):
             return count > 0
         return False
 
-    @pyqtSlot(str, str, result=bool)
-    def login(self, nickname: str, password: str) -> bool:
+    @pyqtSlot(str, str, result=list)
+    def login(self, nickname: str, password: str) -> list:
         query = QSqlQuery()
         query.prepare("""
             SELECT password FROM Utente
@@ -81,6 +81,7 @@ class Users(QObject):
         """)
         query.bindValue(":nickname", nickname)
         if query.exec() and query.next():
-            return bcrypt.checkpw(password.encode('utf-8'), query.value(0).encode('utf-8'))
+            passwordCheck = bcrypt.checkpw(password.encode('utf-8'), query.value(0).encode('utf-8'))
+            return [passwordCheck, f"Logged as {nickname}" if passwordCheck else "Password Not Correct."]
 
-        return False
+        return [False, f"Username '{nickname}' Not Found."]

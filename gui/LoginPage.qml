@@ -126,6 +126,9 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
             placeholder: "Password"
+
+            echoMode: TextInput.Password
+            passwordMaskDelay: 500
         }
         RowLayout {
             Layout.fillWidth: true
@@ -153,7 +156,20 @@ Item {
 
                 iconCode: Utils.getIcon(0xE428)
                 onClicked: {
-                    loginPage.loggedSuccessfully()
+                    if(loginUsername.text === "") {
+                        errorPopup.show("Please Insert Username.")
+                        return
+                    }
+                    else if(loginPassword.text === "") {
+                        errorPopup.show("Please Insert Password.")
+                        return
+                    }
+
+                    var temp = usersData.login(loginUsername.text, loginPassword.text)
+                    var check = temp[0]
+                    var error = temp[1]
+
+                    errorPopup.show(error, (check ? loginPage.loggedSuccessfully : undefined))
                 }
             }
         }
@@ -242,7 +258,7 @@ Item {
             placeholder: "Repeat Password"
 
             echoMode: TextInput.Password
-            passwordMaskDelay: 1000
+            passwordMaskDelay: 500
         }
         RowLayout {
             Layout.fillWidth: true
@@ -305,10 +321,31 @@ Item {
                         return
                     }
                     
+                    if(!registerPassword.text.match(/[a-z]/)) {
+                        errorPopup.show("Password Must Contain at Least One Lowercase Character.")
+                        return
+                    }
+                    else if(!registerPassword.text.match(/[A-Z]/)) {
+                        errorPopup.show("Password Must Contain at Least One Uppercase Character.")
+                        return
+                    }
+                    else if(!registerPassword.text.match(/[0-9]/)) {
+                        errorPopup.show("Password Must Contain at Least One Number.")
+                        return
+                    }
+                    else if(registerPassword.text.match(/^([a-zA-Z0-9]+)$/)) {
+                        errorPopup.show("Password Must Contain at Least One Special Character.")
+                        return
+                    }
+                    else if(registerPassword.text.length < 5) {
+                        errorPopup.show("Password Must be at Least 5 Characters Long.")
+                        return
+                    }
+
                     var check = usersData.addUser(registerUsername.text, registerName.text, registerSurname.text, registerDoB.text, registerPosition.text, registerPassword.text)
-                    errorPopup.show(check ? "User " + registerUsername.text + " Added Successfully!" : "Error! Couldn't Add User.")
                     
-                    if(check) loginPage.loggedSuccessfully()
+                    if(check) errorPopup.show("User '" + registerUsername.text + "' Registered Successfully!", loginPage.loggedSuccessfully)
+                    else errorPopup.show("Error! Couldn't Add User.")
                 }
             }
         }
@@ -318,15 +355,19 @@ Item {
         id: errorPopup
 
         property alias error: errorLabel.text
+        property var callbackFunction: undefined
         
         function show(errorText = "", callback = undefined) {
             if(errorText === "") return
 
             errorPopup.error = errorText
             errorPopup.open()
+
+            errorPopup.callbackFunction = undefined
+            if(Utils.exists(callback)) errorPopup.callbackFunction = callback
         }
 
-        width: Utils.perc(parent.width, 40)
+        width: Utils.perc(parent.width, 50)
         height: Utils.perc(parent.height, 30)
 
         anchors.centerIn: parent
@@ -346,7 +387,9 @@ Item {
             }
             radius: 25
         }
-        contentItem: Controls.Label { id: errorLabel }
+        contentItem: Controls.Label { id: errorLabel; font.bold: true }
+
+        onClosed: if(Utils.exists(errorPopup.callbackFunction)) errorPopup.callbackFunction()
     }
 
     Users { id: usersData }
