@@ -53,9 +53,9 @@ CREATE TABLE Utente (
     nickname VARCHAR(31) NOT NULL,
     nome VARCHAR(31) NOT NULL,
     cognome VARCHAR(31) NOT NULL,
-    dataNascita DATE NOT NULL,
-    luogo VARCHAR(63) NOT NULL,
-    Password VARCHAR(15) NOT NULL,
+    dataNascita DATE,
+    luogo VARCHAR(63),
+    password VARCHAR(15) NOT NULL,
 	PRIMARY KEY (nickname)
 );
 

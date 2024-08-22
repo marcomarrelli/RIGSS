@@ -1,10 +1,12 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15 as C
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import QtQuick.Controls 1.4 as OldC
 
 import ApplicationSettings 1.0
+
+import Users 1.0
 
 import "./controls" as Controls
 import "../logic/utils.js" as Utils
@@ -86,7 +88,6 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     loginPage.loggedSuccessfully()
-                    //rigss.userPrivilage = RIGSS.Privilage.NotLogged
                 }
             }
         }
@@ -153,7 +154,6 @@ Item {
                 iconCode: Utils.getIcon(0xE428)
                 onClicked: {
                     loginPage.loggedSuccessfully()
-                    //rigss.userPrivilage = RIGSS.Privilage.User
                 }
             }
         }
@@ -230,6 +230,9 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
             placeholder: "Password"
+
+            echoMode: TextInput.Password
+            passwordMaskDelay: 500
         }
         Controls.TextField {
             id: registerConfirmPassword
@@ -237,6 +240,9 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: Utils.perc(registerBody.height, 10)
             placeholder: "Repeat Password"
+
+            echoMode: TextInput.Password
+            passwordMaskDelay: 1000
         }
         RowLayout {
             Layout.fillWidth: true
@@ -270,9 +276,78 @@ Item {
                 iconCode: Utils.getIcon(0xEAFA)
 
                 onClicked: {
-
+                    if(registerUsername.text === "") {
+                        errorPopup.show("Error! Nickname Must Not be Blank.")
+                        return
+                    }
+                    else if(usersData.userExists(registerUsername.text)) {
+                        errorPopup.show("Error! Nickname Already in Use.")
+                        return
+                    }
+                    else if(registerName.text === "") {
+                        errorPopup.show("Error! Name Must Not be Blank.")
+                        return
+                    }
+                    else if(registerSurname.text === "") {
+                        errorPopup.show("Error! Surname Must Not be Blank.")
+                        return
+                    }
+                    else if(registerPassword.text === "") {
+                        errorPopup.show("Error! Password Must Not be Blank.")
+                        return
+                    }
+                    else if(registerConfirmPassword.text === "") {
+                        errorPopup.show("Error! Password Must be Confirmed.")
+                        return
+                    }
+                    else if(registerPassword.text !== registerConfirmPassword.text) {
+                        errorPopup.show("Error! Password Not Confirmed Properly.")
+                        return
+                    }
+                    
+                    var check = usersData.addUser(registerUsername.text, registerName.text, registerSurname.text, registerDoB.text, registerPosition.text, registerPassword.text)
+                    errorPopup.show(check ? "User " + registerUsername.text + " Added Successfully!" : "Error! Couldn't Add User.")
+                    
+                    if(check) loginPage.loggedSuccessfully()
                 }
             }
         }
     }
+
+    Popup {
+        id: errorPopup
+
+        property alias error: errorLabel.text
+        
+        function show(errorText = "", callback = undefined) {
+            if(errorText === "") return
+
+            errorPopup.error = errorText
+            errorPopup.open()
+        }
+
+        width: Utils.perc(parent.width, 40)
+        height: Utils.perc(parent.height, 30)
+
+        anchors.centerIn: parent
+
+        focus: true
+        modal: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            id: errorBackground
+            
+            anchors.fill: parent
+            color: Theme.dark
+            border {
+                color: Theme.border
+                width: 1
+            }
+            radius: 25
+        }
+        contentItem: Controls.Label { id: errorLabel }
+    }
+
+    Users { id: usersData }
 }
