@@ -35,6 +35,11 @@ def connect():
 
     return True
 
+def close():
+    database = QSqlDatabase.database()
+    if database.isOpen(): database.close()
+    QSqlDatabase.removeDatabase(DATABASE_NAME)
+    print("Database Connection Closed.")
 
 def create():
     try:
@@ -45,9 +50,11 @@ def create():
                 if query.strip():
                     q = QSqlQuery()
                     if not q.exec_(query.strip()): print(f"Failed to execute query. {q.lastError().text()}.")
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         print(f"Fatal Error: Cannot Initialize Database '{DATABASE_NAME}'.")
-        exit(-1)
+        return False
+
+    return True
 
 
 def addNameLogo(query: QSqlQuery, tabella: str, nameValue: str, logoString: str):
@@ -94,25 +101,30 @@ def addFixedValues():
     q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Debito");')
     q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Credito");')
 
-    # q.exec_('INSERT INTO Distributore(idImpianto, gestore, bandiera, tipologia, nome, via, numeroCivico, cap, comune, provincia, latitudine, longitudine, simulato) VALUES(0, "Mario Rossi", "Q8", "Tipo", "Rossi Gas", "Via Mario Rossi", "1", "00000", "Roma", "Roma", 41.90, 12.50, false)')
+    return True
 
 
-def addGasStationsFromFile(filepath=os.fspath(CURRENT_DIRECTORY / "model" / "resources" / "anagrafica_impianti_attivi.csv"), n=25):
+def addGasStationsFromFile(gsfp=os.fspath(CURRENT_DIRECTORY / "model" / "resources" / "anagrafica_impianti_attivi.csv"), fpfp=os.fspath(CURRENT_DIRECTORY / "model" / "resources" / "prezzo_alle_8.csv"), n=50):
     q = QSqlQuery()
     
     flags = ["Q8", "Esso", "Agip Eni", "Pompe Bianche", "Api-Ip", "Tamoil"]
+    fuels = ["Benzina", "Gasolio", "Metano", "GPL"]
+
+    loadedIDs = []
+
+    print("Loading Gas Stations...")
 
     try:
-        with open(filepath, 'r', encoding='utf-8') as file:
+        with open(gsfp, 'r', encoding='utf-8') as file:
             lines = file.readlines()
 
         if len(lines) < n:
-            return
+            return False
 
-        lines = lines[2:]   # Rimuovo le prime due righe di commento del file csv
+        lines = lines[2:]
         rl = random.sample(lines, n)
 
-        for i, r in enumerate(rl, start=1):
+        for r in rl:
             temp = r.strip().split(';')
             
             if temp[2] not in flags:
@@ -141,19 +153,56 @@ def addGasStationsFromFile(filepath=os.fspath(CURRENT_DIRECTORY / "model" / "res
             q.addBindValue(temp[9])
             q.addBindValue(False) # simulato = false
             
-            q.exec_()
+            if q.exec_(): loadedIDs.append(temp[0])
+            else: continue
 
     except FileNotFoundError:
-        print(f"Il file '{filepath}' non è stato trovato.")
-        return
+        print(f"Mimit Gov. Anagraphic File Not Found. Download It Online and Place It in 'model/resources'.")
+        return False
+    
+    print("Loading Fuel Prices...")
+
+    try:
+        with open(fpfp, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+
+        lines = lines[2:]
+
+        for r in lines:
+            temp = r.strip().split(';')
+
+            if temp[0] not in loadedIDs: continue
+
+            if temp[1] not in fuels:
+                print(f"Fuel '{temp[1]}' not Valid! Loading Next Fuel...")
+                continue
+
+            q.prepare('INSERT INTO Carburante(idImpianto, nome, prezzo, self, dataAggiornamento) VALUES(?, ?, ?, ?, ?);')
+
+            q.addBindValue(temp[0]) # ID
+            q.addBindValue(temp[1]) # Nome
+            q.addBindValue(temp[2]) # Prezzo
+            q.addBindValue(temp[3]) # Self
+            q.addBindValue(temp[4]) # DataAggiornamento
+            
+            if not q.exec_(): continue
+
+    except FileNotFoundError:
+        print(f"Mimit Gov. Price File Not Found. Download It Online and Place It in 'model/resources'.")
+        return False
+    
+    print("Finish Loading MIMIT GOV. Data.")
+    return True
 
 
 def initializeDatabase():
     isFirstInitialization = not os.path.exists(DATABASE_NAME)
     
-    if not connect(): sys.exit(-1)
-    if not isFirstInitialization: return
+    if not connect(): return False
+    if not isFirstInitialization: return True
 
-    create()
-    addFixedValues()
-    addGasStationsFromFile()
+    if not create(): return False
+    if not addFixedValues(): return False
+    if not addGasStationsFromFile(): return False
+    
+    return True

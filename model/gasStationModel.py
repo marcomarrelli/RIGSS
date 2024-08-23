@@ -37,6 +37,14 @@ class GasStations(QObject):
             OR LOWER(provincia) LIKE '{self._filter}%'
         """)
 
+class Carburante:
+    def __init__(self, idImpianto, nome, prezzo, selfService, dataAggiornamento = None):
+        self.idImpianto = idImpianto
+        self.nome = nome
+        self.prezzo = prezzo
+        self.selfService = selfService
+        if(dataAggiornamento is not None): self.dataAggiornamento = dataAggiornamento
+
 class GasStationsModel(BaseModel):
     def __init__(self, parent: QObject = None) -> None:
         super(GasStationsModel, self).__init__(["idImpianto", "gestore", "bandiera", "tipologia", "nome", "via", "cap", "comune", "provincia", "latitudine", "longitudine", "simulato"])
@@ -57,4 +65,22 @@ class GasStationsModel(BaseModel):
         query.exec_()
         
         return query.value(0) if query.next() else ""
+    
+    @pyqtSlot(str, result=list)
+    def getFuels(self, idImpianto: str) -> list:
+        query = QSqlQuery()
+        query.prepare("""
+            SELECT idImpianto, nome, prezzo, self
+            FROM Carburante
+            WHERE Carburante.idImpianto = :idImpianto;
+        """)
+        query.bindValue(":idImpianto", idImpianto)
+        query.exec_()
+        
+        results = []
+        
+        while query.next():
+            results.append(Carburante(query.value(0), query.value(1), query.value(2), query.value(3)))
+        
+        return results
         

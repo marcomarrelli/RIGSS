@@ -44,7 +44,7 @@ CREATE TABLE Carburante (
 	nome VARCHAR(31) NOT NULL,
     prezzo DECIMAL(6, 3) NOT NULL,
     self BOOLEAN NOT NULL,
-    dataAggiornamento DATETIME NOT NULL,
+    dataAggiornamento DATETIME,
 	PRIMARY KEY (idImpianto, nome, self),
     FOREIGN KEY (nome) REFERENCES TipologiaCarburante(nome)
 );

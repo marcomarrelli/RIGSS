@@ -42,7 +42,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, qmlRegisterSingletonType
 from PyQt5.QtGui import QGuiApplication, QFontDatabase
 
-from init import initializeDatabase
+from init import initializeDatabase, close as closeDatabaseConnection
 
 from model.baseModel import BaseModel
 from model.gasStationModel import GasStations
@@ -58,7 +58,11 @@ if __name__ == '__main__':
     app.setOrganizationName("Marrelli and Zanchini")
     app.setApplicationName("RIGSS")
 
-    initializeDatabase()
+    if not initializeDatabase():
+        print("FATAL: Couldn't Initialize Database.")
+        closeDatabaseConnection()
+        if os.path.exists("RIGSS.sqlite3"): os.remove("RIGSS.sqlite3")
+        sys.exit(-1)
 
     qmlRegisterType(GasStations, 'GasStations', 1, 0, 'GasStations')
     qmlRegisterType(Users, 'Users', 1, 0, 'Users')
