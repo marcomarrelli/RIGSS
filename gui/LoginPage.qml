@@ -17,7 +17,7 @@ Item {
     property color backgroundColor: Theme.mid
     readonly property real radius: 25
 
-    signal loggedSuccessfully()
+    signal loggedSuccessfully(privilage: int, username: string)
 
     Rectangle {
         id: bodyBackground
@@ -86,9 +86,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: {
-                    loginPage.loggedSuccessfully()
-                }
+                onClicked: loginPage.loggedSuccessfully(RIGSS.Privilage.NotLogged, "")
             }
         }
     }
@@ -169,7 +167,7 @@ Item {
                     var check = temp[0]
                     var error = temp[1]
 
-                    errorPopup.show(error, (check ? loginPage.loggedSuccessfully : undefined))
+                    errorPopup.show(error, (check ? loginPage.loggedSuccessfully : undefined), RIGSS.Privilage.User, loginUsername.text)
                 }
             }
         }
@@ -344,7 +342,7 @@ Item {
 
                     var check = usersData.addUser(registerUsername.text, registerName.text, registerSurname.text, registerDoB.text, registerPosition.text, registerPassword.text)
                     
-                    if(check) errorPopup.show("User '" + registerUsername.text + "' Registered Successfully!", loginPage.loggedSuccessfully)
+                    if(check) errorPopup.show("User '" + registerUsername.text + "' Registered Successfully!", loginPage.loggedSuccessfully. RIGSS.Privilage.User, registerUsername.text)
                     else errorPopup.show("Error! Couldn't Add User.")
                 }
             }
@@ -357,14 +355,21 @@ Item {
         property alias error: errorLabel.text
         property var callbackFunction: undefined
         
-        function show(errorText = "", callback = undefined) {
+        property int privilage: RIGSS.Privilage.NotLogged
+        property string username: ""
+
+        function show(errorText = "", callback = undefined, privilage = RIGSS.Privilage.NotLogged, username = "") {
             if(errorText === "") return
 
             errorPopup.error = errorText
             errorPopup.open()
 
             errorPopup.callbackFunction = undefined
-            if(Utils.exists(callback)) errorPopup.callbackFunction = callback
+            
+            if(!Utils.exists(callback)) return
+            errorPopup.callbackFunction = callback
+            errorPopup.privilage = privilage
+            errorPopup.username = username
         }
 
         width: Utils.perc(parent.width, 50)
@@ -389,7 +394,7 @@ Item {
         }
         contentItem: Controls.Label { id: errorLabel; font.bold: true }
 
-        onClosed: if(Utils.exists(errorPopup.callbackFunction)) errorPopup.callbackFunction()
+        onClosed: if(Utils.exists(errorPopup.callbackFunction)) errorPopup.callbackFunction(errorPopup.privilage, errorPopup.username)
     }
 
     Users { id: usersData }

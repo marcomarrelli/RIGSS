@@ -17,14 +17,10 @@ Item {
     property real backgroundRadius: 25
 
     property var gasStations
-
+    property string username: ""
     property int selectedPanel: 0
 
     signal gasStationSelected(gasStation: var)
-
-    //function openGasStation(gasStation = undefined) {
-    //    if(!Utils.exists(gasStation)) return
-    //}
 
     Rectangle {
         id: background
@@ -57,7 +53,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignLeft   
                 horizontalAlignment: Text.AlignLeft  
-                text: "Welcome [user]!"
+                text: controlSection.username === "" ? "Welcome!" : "Welcome " + controlSection.username + "!"
                 leftPadding: 3
             }
             Controls.Button {
@@ -66,6 +62,8 @@ Item {
                 Layout.alignment: Qt.AlignRight  
                 iconCode: Utils.getIcon(0xE4C2)
                 radius: controlSection.backgroundRadius
+                enabled: controlSection.username !== ""
+                opacity: enabled ? 1 : 0.25
             }
         }
         ButtonGroup {

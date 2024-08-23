@@ -9,6 +9,7 @@ import "../logic/utils.js" as Utils
 Item {
     id: mainPage
 
+    property alias username: controlPanel.username
     readonly property real radius: 25
 
     GasStationsMap {

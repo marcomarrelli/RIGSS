@@ -195,7 +195,7 @@ def addGasStationsFromFile(gsfp=os.fspath(CURRENT_DIRECTORY / "model" / "resourc
     return True
 
 
-def initializeDatabase():
+def initializeDatabase(gsn=50):
     isFirstInitialization = not os.path.exists(DATABASE_NAME)
     
     if not connect(): return False
@@ -203,6 +203,6 @@ def initializeDatabase():
 
     if not create(): return False
     if not addFixedValues(): return False
-    if not addGasStationsFromFile(): return False
+    if not addGasStationsFromFile(n=gsn): return False
     
     return True

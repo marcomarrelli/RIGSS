@@ -49,6 +49,7 @@ from model.gasStationModel import GasStations
 from model.userModel import Users
 
 CURRENT_DIRECTORY = Path(__file__).resolve().parent
+GAS_STATIONS_NUMBER = 100
 
 mainFilePath = QUrl.fromLocalFile(os.fspath(CURRENT_DIRECTORY / "gui" / "RIGSS.qml"))
 themeFilePath = QUrl.fromLocalFile(os.fspath(CURRENT_DIRECTORY / "gui" / "Theme.qml"))
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     app.setOrganizationName("Marrelli and Zanchini")
     app.setApplicationName("RIGSS")
 
-    if not initializeDatabase():
+    if not initializeDatabase(gsn=GAS_STATIONS_NUMBER):
         print("FATAL: Couldn't Initialize Database.")
         closeDatabaseConnection()
         if os.path.exists("RIGSS.sqlite3"): os.remove("RIGSS.sqlite3")

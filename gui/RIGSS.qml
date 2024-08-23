@@ -16,6 +16,8 @@ ApplicationWindow {
     id: rigss
 
     property int userPrivilage: RIGSS.Privilage.NotLogged
+    property string username: ""
+
     property string applicationTitle: qsTr("RIGSS")
 
     minimumWidth: Utils.perc(Screen.width, 70)
@@ -43,10 +45,6 @@ ApplicationWindow {
     StackView {
         id: stack
 
-        function setPrivilage(privilage) {
-            rigss.userPrivilage = privilage
-        }
-
         anchors.fill: parent
 
         Component.onCompleted: stack.push(mainPageWrapper, loginPageWrapper)
@@ -57,6 +55,8 @@ ApplicationWindow {
         
         MainPage {
             id: mainPage
+
+            username: rigss.username
         }
     }
     Component {
@@ -65,7 +65,9 @@ ApplicationWindow {
         LoginPage {
             id: loginPage            
         
-            onLoggedSuccessfully: {
+            onLoggedSuccessfully: (privilage, username) => {
+                rigss.userPrivilage = privilage
+                rigss.username = username
                 stack.pop(StackView.Immediate)
             }
         }

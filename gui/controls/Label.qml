@@ -9,7 +9,7 @@ T.Label {
     id: label
 
     property real fontSize: 12
-    property string fontFamily: ""
+    property string fontFamily: "Serif Regular"
 
     property bool hoverEnabled: false
     property bool bold: false
