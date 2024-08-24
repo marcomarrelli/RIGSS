@@ -146,3 +146,16 @@ class GasStationsModel(BaseModel):
         query.exec_()
         
         return query.value(0) if query.next() else ""
+    
+    @pyqtSlot(str, result=str)
+    def getLogo(self, bandiera: str) -> str:
+        query = QSqlQuery()
+        query.prepare("""
+            SELECT logo
+            FROM Bandiera
+            WHERE Bandiera.nome = :bandiera;
+        """)
+        query.bindValue(":bandiera", bandiera)
+        query.exec_()
+        
+        return query.value(0) if query.next() else ""

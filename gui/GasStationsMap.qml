@@ -116,22 +116,14 @@ Map {
         function show(gasStation) {
             if(!gasStation) return
 
-            var fuelList = map.gasStations.getFuels(gasStation.idImpianto)
-            fuelLabel.text = ""
-
-            if(fuelList.length === 0) fuelLabel.text = "No Fuels Available!"
-            else {
-                for(var f=0; f<fuelList.length; f++) {
-                    var fuel = fuelList[f]
-                    fuelLabel.text += fuel[3] ? (fuel[1] + " (Self): " + fuel[2] + "\n") : (fuel[1] + " (Servito): " + fuel[2] + "\n")
-                }
-            }
+            fuelCard.name = gasStation.nome
+            fuelCard.fuelList = map.gasStations.getFuels(gasStation.idImpianto)
 
             fuelsPopup.open()
         }
 
-        width: Utils.perc(parent.width, 50)
-        height: Utils.perc(parent.height, 50)
+        width: Utils.perc(parent.width, 70)
+        height: Utils.perc(parent.height, 60)
 
         anchors.centerIn: parent
 
@@ -139,15 +131,7 @@ Map {
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-        background: Rectangle {
-            anchors.fill: parent
-            color: Theme.dark
-            border {
-                color: Theme.border
-                width: 1
-            }
-            radius: 25
-        }
-        contentItem: Controls.Label { id: fuelLabel }
+        background: Rectangle { color: "transparent" }
+        contentItem: FuelsCard { id: fuelCard }
     }
 }

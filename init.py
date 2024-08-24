@@ -71,7 +71,7 @@ def addFixedValues():
     q = QSqlQuery()
 
     with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "benzina.svg"), 'r') as file: benzina = file.read() or ""
-    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "diesel.svg"), 'r') as file: gasolio = file.read() or ""
+    with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "gasolio.svg"), 'r') as file: gasolio = file.read() or ""
     with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "metano.svg"), 'r') as file: metano = file.read() or ""
     with open(os.fspath(CURRENT_DIRECTORY / "gui" / "resources" / "gpl.svg"), 'r') as file: gpl = file.read() or ""
 
