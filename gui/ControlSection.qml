@@ -75,7 +75,7 @@ Item {
             onClicked: {
                 switch(button.text) {
                     case "Gas Stations": body.model = gasStationModel; return
-                    case "Advanced": body.model = undefined; return
+                    case "Advanced": body.model = advancedSearchModel; return
                     case "Statistics": body.model = statisticsModel; return
                     default: return
                 }
@@ -187,6 +187,94 @@ Item {
                 gasStationView.forceLayout()
                 gasStationView.forceActiveFocus()
             }
+        }
+    }
+
+    ObjectModel {
+        id: advancedSearchModel
+
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            spacing: 5
+
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(parent.width, 40)-parent.spacing
+                Layout.fillHeight: true
+
+                text: "Set Max Price: "
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(parent.width, 55)-parent.spacing
+                Layout.fillHeight: true
+                
+                text: ""
+                validator: RegularExpressionValidator {
+                    regularExpression: /^$|([0-9]*)?[.]?[0-9]+/ // /([0-9]*)?[.]?[0-9]+/
+                }
+
+                onEditingFinished: {
+                    if(text === "") text = "0"
+                    if(acceptableInput) controlSection.gasStations.filter.maxPrice = parseFloat(text)
+                }
+            }
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(parent.width, 5)-parent.spacing
+                Layout.fillHeight: true
+
+                text: "€"
+                horizontalAlignment: Text.AlignLeft
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        Controls.Label {
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            text: "Choose Available Fuels:"
+            horizontalAlignment: Text.AlignLeft
+        }
+        RowLayout {
+            id: fuelButtonRow
+
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            spacing: 5
+
+            Repeater {
+                model: ["Benzina", "Gasolio", "Metano", "GPL"]
+
+                delegate: Controls.Button {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    text: modelData
+                    checkable: true
+
+                    onCheckedChanged: {
+                        if(text === "") return
+
+                        if(checked) controlSection.gasStations.filter.addAvailableFuel(text)
+                        else controlSection.gasStations.filter.removeAvailableFuel(text)
+                    }
+                }
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        Controls.Label {
+            width: body.width
+            height: Utils.perc(body.height, 40)
+
+            text: "TEST"
         }
     }
 

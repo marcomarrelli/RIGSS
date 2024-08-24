@@ -42,6 +42,18 @@ class GasStationFilter(QObject):
             self._maxPrice = value
             self.filterChanged.emit()
 
+    @pyqtSlot(str)
+    def addAvailableFuel(self, fuel: str) -> None:
+        if fuel not in self._availableFuels:
+            self._availableFuels.append(fuel)
+            self.filterChanged.emit()
+
+    @pyqtSlot(str)
+    def removeAvailableFuel(self, fuel: str) -> None:
+        if fuel in self._availableFuels:
+            self._availableFuels.remove(fuel)
+            self.filterChanged.emit()
+
 class GasStations(QObject):
     modelChanged = pyqtSignal(QObject)
     filterChanged = pyqtSignal(QObject)
@@ -63,17 +75,6 @@ class GasStations(QObject):
     @pyqtProperty(QObject, notify=filterChanged)
     def filter(self):
         return self._filter
-
-    #@pyqtSlot()
-    #def refresh(self):
-    #    query_str = """
-    #        SELECT DISTINCT Distributore.idImpianto, gestore, bandiera, tipologia, Distributore.nome, via, cap, comune, provincia, latitudine, longitudine, simulato
-    #        FROM Distributore
-    #    """
-    #    
-    #    if self._filter.name:
-    #        query_str += f"\nWHERE LOWER(Distributore.nome) LIKE '%{self._filter.name.lower()}%'"
-    #    self._model.setQuery(query_str)
     
     @pyqtSlot()
     def refresh(self):
@@ -96,7 +97,11 @@ class GasStations(QObject):
         query_str += ")"
 
         if self._filter.name:
-            query_str += f" AND LOWER(Distributore.nome) LIKE '%{self._filter.name.lower()}%'"
+            query_str += f"""
+            AND LOWER(Distributore.nome) LIKE '%{self._filter.name.lower()}%'
+            OR LOWER(Distributore.comune) LIKE '%{self._filter.name.lower()}%'
+            OR LOWER(Distributore.provincia) LIKE '%{self._filter.name.lower()}%;'
+            """
 
         self._model.setQuery(query_str)
 
