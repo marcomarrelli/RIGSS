@@ -39,6 +39,12 @@ Map {
         map.center = QtPositioning.coordinate(gasStation.latitudine, gasStation.longitudine)
     }
 
+    function showFuels(gasStation = undefined) {
+        if(!gasStation) return map.centerCoordinates
+
+        fuelsPopup.show(gasStation)
+    }
+
     activeMapType: map.supportedMapTypes[map.supportedMapTypes.length-1]
     width: 500
     height: 500
@@ -82,7 +88,7 @@ Map {
                 simulated: model.simulato
                 size: itemSize
 
-                //onClicked: TO DO
+                onClicked: map.showFuels(model)
             }
         }
     }
@@ -102,5 +108,46 @@ Map {
 
         rotationScale: 1/120
         onWheel: (wheel) => map.zoom(wheel)
+    }
+
+    Popup {
+        id: fuelsPopup
+
+        function show(gasStation) {
+            if(!gasStation) return
+
+            var fuelList = map.gasStations.getFuels(gasStation.idImpianto)
+            fuelLabel.text = ""
+
+            if(fuelList.length === 0) fuelLabel.text = "No Fuels Available!"
+            else {
+                for(var f=0; f<fuelList.length; f++) {
+                    var fuel = fuelList[f]
+                    fuelLabel.text += fuel[3] ? (fuel[1] + " (Self): " + fuel[2] + "\n") : (fuel[1] + " (Servito): " + fuel[2] + "\n")
+                }
+            }
+
+            fuelsPopup.open()
+        }
+
+        width: Utils.perc(parent.width, 50)
+        height: Utils.perc(parent.height, 50)
+
+        anchors.centerIn: parent
+
+        focus: true
+        modal: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            anchors.fill: parent
+            color: Theme.dark
+            border {
+                color: Theme.border
+                width: 1
+            }
+            radius: 25
+        }
+        contentItem: Controls.Label { id: fuelLabel }
     }
 }

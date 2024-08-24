@@ -160,10 +160,7 @@ Item {
 
             placeholder: "Search by Name or Place"
 
-            onTextChanged: {
-                controlSection.gasStations.filter = text
-                controlSection.gasStations.refresh()
-            }
+            onTextChanged: controlSection.gasStations.filter.name = text
         }
         ListView {        
             id: gasStationView

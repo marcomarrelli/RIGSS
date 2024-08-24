@@ -41,7 +41,10 @@ Item {
         backgroundRadius: mainPage.radius
 
         gasStations: gasStationsData
-        onGasStationSelected: (gasStation) => gasStationMap.goTo(gasStation)
+        onGasStationSelected: (gasStation) => {
+            gasStationMap.goTo(gasStation)
+            gasStationMap.showFuels(gasStation)
+        }
     }
 
     GasStations { id: gasStationsData }
