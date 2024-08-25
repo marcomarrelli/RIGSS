@@ -263,6 +263,8 @@ Item {
                         if(checked) controlSection.gasStations.filter.addAvailableFuel(text)
                         else controlSection.gasStations.filter.removeAvailableFuel(text)
                     }
+
+                    Component.onCompleted: checked = true
                 }
             }
         }
@@ -315,6 +317,41 @@ Item {
                 checked: true
         
                 onCheckedChanged: controlSection.gasStations.filter.service = selfButtonRow.getServiceStatus()
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        Controls.Label {
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            text: "Sort Gas Stations List:"
+            horizontalAlignment: Text.AlignLeft
+        }
+        RowLayout {
+            id: alphabeticOrderRow
+
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            spacing: 5
+
+            Controls.Button {
+                Layout.fillWidth: true; Layout.fillHeight: true
+                text: "Ascendent"
+                onClicked: controlSection.gasStations.sortAscendent()
+            }
+            Controls.Button {
+                Layout.fillWidth: true; Layout.fillHeight: true
+                text: "Descendent"
+                onClicked: controlSection.gasStations.sortDescendent()
+            }
+            Controls.Button {
+                Layout.fillWidth: true; Layout.fillHeight: true
+                text: "Default"
+                onClicked: controlSection.gasStations.filter.order = ""
             }
         }
     }

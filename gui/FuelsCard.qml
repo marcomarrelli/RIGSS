@@ -114,6 +114,7 @@ Item {
                     Layout.preferredHeight: Utils.perc(fuelRow.height, 80)
 
                     text: "Buy"
+                    backgroundColor: Qt.lighter(Theme.light, 1.25)
                 }
             }
         }

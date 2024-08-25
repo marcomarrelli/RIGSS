@@ -11,7 +11,8 @@ class GasStationFilter(QObject):
         self._name = ""
         self._availableFuels = []
         self._maxPrice = 0.0
-        self._service = 2 # 1: Self, 0: Served, 2: ALL
+        self._service = 2  # 1: Self, 0: Served, 2: ALL
+        self._order = ""
 
     @pyqtProperty(str, notify=filterChanged)
     def name(self) -> str:
@@ -65,6 +66,16 @@ class GasStationFilter(QObject):
             self._availableFuels.remove(fuel)
             self.filterChanged.emit()
 
+    @pyqtProperty(str, notify=filterChanged)
+    def order(self) -> str:
+        return self._order
+
+    @order.setter
+    def order(self, value: str) -> None:
+        if self._order != value:
+            self._order = value
+            self.filterChanged.emit()
+
 class GasStations(QObject):
     modelChanged = pyqtSignal(QObject)
     filterChanged = pyqtSignal(QObject)
@@ -112,12 +123,24 @@ class GasStations(QObject):
 
         if self._filter.name:
             q += f"""
-            AND LOWER(Distributore.nome) LIKE '%{self._filter.name.lower()}%'
+            AND (LOWER(Distributore.nome) LIKE '%{self._filter.name.lower()}%'
             OR LOWER(Distributore.comune) LIKE '%{self._filter.name.lower()}%'
-            OR LOWER(Distributore.provincia) LIKE '%{self._filter.name.lower()}%;'
+            OR LOWER(Distributore.provincia) LIKE '%{self._filter.name.lower()}%')
             """
 
+        if self._filter.order:
+             q += f" ORDER BY {self._filter.order}"
+
+        q += ";"
         self._model.setQuery(q)
+
+    @pyqtSlot()
+    def sortAscendent(self): 
+        self._filter.order = "LOWER(Distributore.nome) ASC"
+
+    @pyqtSlot()
+    def sortDescendent(self): 
+        self._filter.order = "LOWER(Distributore.nome) DESC"
 
     @pyqtSlot(str, result=list)
     def getFuels(self, idImpianto: str) -> list:
@@ -156,19 +179,6 @@ class GasStationsModel(BaseModel):
             FROM Distributore;
         """)
 
-    @pyqtSlot(str, result=str)
-    def getLogo(self, bandiera: str) -> str:
-        query = QSqlQuery()
-        query.prepare("""
-            SELECT logo
-            FROM Bandiera
-            WHERE Bandiera.nome = :bandiera;
-        """)
-        query.bindValue(":bandiera", bandiera)
-        query.exec_()
-        
-        return query.value(0) if query.next() else ""
-    
     @pyqtSlot(str, result=str)
     def getLogo(self, bandiera: str) -> str:
         query = QSqlQuery()
