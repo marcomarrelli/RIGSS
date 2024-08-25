@@ -272,9 +272,50 @@ Item {
         }
         Controls.Label {
             width: body.width
-            height: Utils.perc(body.height, 40)
+            height: Utils.perc(body.height, 7.5)
 
-            text: "TEST"
+            text: "Select Service Mode:"
+            horizontalAlignment: Text.AlignLeft
+        }
+        RowLayout {
+            id: selfButtonRow
+
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            spacing: 5
+
+            function getServiceStatus(self = selfButton.checked, served = servedButton.checked) {
+                if(self === undefined || served === undefined) return 2
+                
+                if((self && served) || (!self && !served)) return 2
+                else return self ? 1 : 0
+            }
+
+            Controls.Button {
+                id: selfButton
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                text: "Self"
+                checkable: true
+                checked: true
+                
+                onCheckedChanged: controlSection.gasStations.filter.service = selfButtonRow.getServiceStatus()
+            }
+            Controls.Button {
+                id: servedButton
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                text: "Served"
+                checkable: true
+                checked: true
+        
+                onCheckedChanged: controlSection.gasStations.filter.service = selfButtonRow.getServiceStatus()
+            }
         }
     }
 

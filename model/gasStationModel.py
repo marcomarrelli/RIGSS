@@ -11,6 +11,7 @@ class GasStationFilter(QObject):
         self._name = ""
         self._availableFuels = []
         self._maxPrice = 0.0
+        self._service = 2 # 1: Self, 0: Served, 2: ALL
 
     @pyqtProperty(str, notify=filterChanged)
     def name(self) -> str:
@@ -40,6 +41,16 @@ class GasStationFilter(QObject):
     def maxPrice(self, value: float) -> None:
         if self._maxPrice != value:
             self._maxPrice = value
+            self.filterChanged.emit()
+
+    @pyqtProperty(int, notify=filterChanged)
+    def service(self) -> int:
+        return self._service
+
+    @service.setter
+    def service(self, value: int) -> None:
+        if self._service != value:
+            self._service = value
             self.filterChanged.emit()
 
     @pyqtSlot(str)
@@ -78,7 +89,7 @@ class GasStations(QObject):
     
     @pyqtSlot()
     def refresh(self):
-        query_str = """
+        q = """
             SELECT DISTINCT Distributore.idImpianto, gestore, bandiera, tipologia, Distributore.nome, via, cap, comune, provincia, latitudine, longitudine, simulato
             FROM Distributore
             WHERE EXISTS (
@@ -88,22 +99,25 @@ class GasStations(QObject):
         """
         
         if self._filter.maxPrice > 0.0:
-            query_str += f" AND Carburante.prezzo <= {self._filter.maxPrice}"
+            q += f" AND Carburante.prezzo <= {self._filter.maxPrice}"
 
         if self._filter.availableFuels:
             fuel_conditions = " OR ".join([f"Carburante.nome = '{fuel}'" for fuel in self._filter.availableFuels])
-            query_str += f" AND ({fuel_conditions})"
-        
-        query_str += ")"
+            q += f" AND ({fuel_conditions})"
+
+        if self._filter.service < 2:
+            q += f" AND Carburante.self = {self._filter.service}"
+
+        q += ")"
 
         if self._filter.name:
-            query_str += f"""
+            q += f"""
             AND LOWER(Distributore.nome) LIKE '%{self._filter.name.lower()}%'
             OR LOWER(Distributore.comune) LIKE '%{self._filter.name.lower()}%'
             OR LOWER(Distributore.provincia) LIKE '%{self._filter.name.lower()}%;'
             """
 
-        self._model.setQuery(query_str)
+        self._model.setQuery(q)
 
     @pyqtSlot(str, result=list)
     def getFuels(self, idImpianto: str) -> list:
@@ -116,6 +130,9 @@ class GasStations(QObject):
         
         if self._filter.maxPrice > 0.0:
             q += f" AND Carburante.prezzo <= {self._filter.maxPrice}"
+
+        if self._filter.service < 2:
+            q += f" AND Carburante.self = {self._filter.service}"
 
         if self._filter.availableFuels:
             fuel_conditions = " OR ".join([f"Carburante.nome = '{fuel}'" for fuel in self._filter.availableFuels])
