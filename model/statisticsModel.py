@@ -1,11 +1,11 @@
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtProperty
 from PyQt5.QtSql import QSqlQuery
 
-from statistics import mode, StatisticsError
+from statistics import stdev, mode, StatisticsError
 
 from .baseModel import BaseModel
 
-class StatisticsModel(BaseModel):
+class Statistics(BaseModel):
     def __init__(self, parent: QObject = None) -> None:
         super().__init__(parent)
 

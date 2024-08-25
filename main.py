@@ -47,6 +47,7 @@ from init import initializeDatabase, close as closeDatabaseConnection
 from model.baseModel import BaseModel
 from model.gasStationModel import GasStations
 from model.userModel import Users
+from model.statisticsModel import Statistics
 
 CURRENT_DIRECTORY = Path(__file__).resolve().parent
 GAS_STATIONS_NUMBER = 100
@@ -67,6 +68,7 @@ if __name__ == '__main__':
 
     qmlRegisterType(GasStations, 'GasStations', 1, 0, 'GasStations')
     qmlRegisterType(Users, 'Users', 1, 0, 'Users')
+    qmlRegisterType(Statistics, 'Statistics', 1, 0, 'Statistics')
     
     qmlRegisterSingletonType(themeFilePath, 'ApplicationSettings', 1, 0, 'Theme')
 
