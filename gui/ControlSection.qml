@@ -18,9 +18,9 @@ Item {
 
     property var gasStations
     property string username: ""
-    property int selectedPanel: 0
 
     signal gasStationSelected(gasStation: var)
+    signal openUserPage()
 
     Rectangle {
         id: background
@@ -54,16 +54,19 @@ Item {
                 Layout.alignment: Qt.AlignLeft   
                 horizontalAlignment: Text.AlignLeft  
                 text: controlSection.username === "" ? "Welcome!" : "Welcome " + controlSection.username + "!"
+                font.bold: true
                 leftPadding: 3
             }
             Controls.Button {
-                Layout.fillHeight: true
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
                 Layout.preferredWidth: height
-                Layout.alignment: Qt.AlignRight  
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                 iconCode: Utils.getIcon(0xE4C2)
                 radius: controlSection.backgroundRadius
                 enabled: controlSection.username !== ""
                 opacity: enabled ? 1 : 0.25
+
+                onClicked: controlSection.openUserPage()
             }
         }
         ButtonGroup {

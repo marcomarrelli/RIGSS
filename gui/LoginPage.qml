@@ -342,7 +342,7 @@ Item {
 
                     var check = usersData.addUser(registerUsername.text, registerName.text, registerSurname.text, registerDoB.text, registerPosition.text, registerPassword.text)
                     
-                    if(check) errorPopup.show("User '" + registerUsername.text + "' Registered Successfully!", loginPage.loggedSuccessfully. RIGSS.Privilage.User, registerUsername.text)
+                    if(check) errorPopup.show("User '" + registerUsername.text + "' Registered Successfully!", loginPage.loggedSuccessfully, RIGSS.Privilage.User, registerUsername.text)
                     else errorPopup.show("Error! Couldn't Add User.")
                 }
             }

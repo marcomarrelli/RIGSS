@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot
-from PyQt5.QtSql import QSqlQuery
+from PyQt5.QtCore import QObject, QVariant, pyqtProperty, pyqtSignal, pyqtSlot
+from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
 
 from .baseModel import BaseModel
 
@@ -78,12 +78,14 @@ class GasStationFilter(QObject):
 
 class GasStations(QObject):
     modelChanged = pyqtSignal(QObject)
+    ownModelChanged = pyqtSignal(QObject)
     filterChanged = pyqtSignal(QObject)
 
     def __init__(self, parent: QObject=None) -> None:
         super().__init__(parent)
         
         self._model = GasStationsModel()
+        self._ownModel = GasStationsModel()
         self._filter = GasStationFilter(self)
         self._filter.filterChanged.connect(self.refresh)
         self.filterChanged.emit(self._filter)
@@ -170,6 +172,116 @@ class GasStations(QObject):
             results.append([query.value(0), query.value(1), query.value(2), query.value(3)])
         
         return results
+
+    @pyqtSlot(str, bool, result=QObject)
+    def getOwnGasStations(self, gestore: str, onlySimulated: bool = None) -> QObject:
+        query = QSqlQuery()
+        q = """
+            SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
+            FROM Distributore
+            WHERE gestore = :gestore
+        """
+
+        if onlySimulated: q += "AND simulato = 1;"
+        else: q += ";"
+
+        query.prepare(q)
+        query.bindValue(":gestore", gestore)
+
+        if query.exec_():
+            self._ownModel.setQuery(query)
+
+        return self._ownModel
+ 
+    @pyqtSlot(str, str, str, str, str, str, str, str, float, float, bool, result=bool)
+    def insertGasStation(self, gestore: str, bandiera: str, tipologia: str, nome: str, via: str, cap: str, comune: str, provincia: str, latitudine: float, longitudine: float) -> bool:
+        query = QSqlQuery()
+        query.prepare("SELECT MAX(idImpianto) FROM Distributore")
+        if not query.exec_() or not query.next():
+            print("Error AutoIncrementing idImpianto:", query.lastError().text())
+            return False
+        
+        maxID = 100000 if query.value(0) < 100000 else (query.value(0)+1)
+
+        del(query)
+
+        query = QSqlQuery()
+        query.prepare("""
+            INSERT INTO Distributore (idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato)
+            VALUES (:idImpianto, :gestore, :bandiera, :tipologia, :nome, :via, :cap, :comune, :provincia, :latitudine, :longitudine, :simulato);
+        """)
+        
+        query.bindValue(":idImpianto", maxID)
+        query.bindValue(":gestore", gestore)
+        query.bindValue(":bandiera", bandiera)
+        query.bindValue(":tipologia", tipologia)
+        query.bindValue(":nome", nome)
+        query.bindValue(":via", via)
+        query.bindValue(":cap", cap)
+        query.bindValue(":comune", comune)
+        query.bindValue(":provincia", provincia)
+        query.bindValue(":latitudine", latitudine)
+        query.bindValue(":longitudine", longitudine)
+        query.bindValue(":simulato", True)
+        
+        if query.exec_():
+            self.ownModelChanged()
+            return True
+        else:
+            print("Error Inserting New Gas Station:", query.lastError().text())
+            return False
+    
+    @pyqtSlot(int, str, str, str, str, str, str, str, str, float, float, bool, result=bool)
+    def updateGasStation(self, idImpianto: int, gestore: str, bandiera: str, tipologia: str, nome: str, via: str, cap: str, comune: str, provincia: str, latitudine: float, longitudine: float, simulato: bool) -> bool:
+        query = QSqlQuery()
+        query.prepare("""
+            UPDATE Distributore
+            SET gestore = :gestore,
+                bandiera = :bandiera,
+                tipologia = :tipologia,
+                nome = :nome,
+                via = :via,
+                cap = :cap,
+                comune = :comune,
+                provincia = :provincia,
+                latitudine = :latitudine,
+                longitudine = :longitudine,
+                simulato = :simulato
+            WHERE idImpianto = :idImpianto;
+        """)
+
+        query.bindValue(":idImpianto", idImpianto)
+        query.bindValue(":gestore", gestore)
+        query.bindValue(":bandiera", bandiera)
+        query.bindValue(":tipologia", tipologia)
+        query.bindValue(":nome", nome)
+        query.bindValue(":via", via)
+        query.bindValue(":cap", cap)
+        query.bindValue(":comune", comune)
+        query.bindValue(":provincia", provincia)
+        query.bindValue(":latitudine", latitudine)
+        query.bindValue(":longitudine", longitudine)
+        query.bindValue(":simulato", simulato)
+
+        if query.exec_():
+            self.ownModelChanged()
+            return True
+        else:
+            print("Error Updating Gas Station:", query.lastError().text())
+            return False
+
+    @pyqtSlot(int, result=bool)
+    def deleteGasStation(self, idImpianto: int) -> bool:
+        query = QSqlQuery()
+        query.prepare("DELETE FROM Distributore WHERE idImpianto = :idImpianto;")
+        query.bindValue(":idImpianto", idImpianto)
+        
+        if query.exec_():
+            self.ownModelChanged()
+            return True
+        else:
+            print("Error Deleting Gas Station:", query.lastError().text())
+            return False
 
 class GasStationsModel(BaseModel):
     def __init__(self, parent: QObject = None) -> None:

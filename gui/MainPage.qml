@@ -9,7 +9,7 @@ import "../logic/utils.js" as Utils
 Item {
     id: mainPage
 
-    property alias username: controlPanel.username
+    property string username: ""
     readonly property real radius: 25
 
     GasStationsMap {
@@ -31,6 +31,7 @@ Item {
     ControlSection {
         id: controlPanel
 
+        visible: true
         anchors {
             top: parent.top; topMargin: 25
             bottom: parent.bottom; bottomMargin: 25
@@ -40,8 +41,35 @@ Item {
 
         backgroundRadius: mainPage.radius
 
+        username: mainPage.username
         gasStations: gasStationsData
         onGasStationSelected: (gasStation) => gasStationMap.goTo(gasStation)
+        onOpenUserPage: {
+            controlPanel.visible = false
+            userPanel.visible = true
+        }
+    }
+
+    UserPage {
+        id: userPanel
+
+        visible: false
+        anchors {
+            top: parent.top; topMargin: 25
+            bottom: parent.bottom; bottomMargin: 25
+            left: gasStationMap.right; leftMargin: 50
+            right: parent.right; rightMargin: 25
+        }
+
+        backgroundRadius: mainPage.radius
+
+        username: mainPage.username
+        gasStations: gasStationsData
+
+        onClose: {
+            userPanel.visible = false
+            controlPanel.visible = true
+        }
     }
 
     GasStations { id: gasStationsData }
