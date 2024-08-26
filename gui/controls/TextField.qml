@@ -24,6 +24,7 @@ C.TextField {
 
     width: 500
     height: 200
+    
     hoverEnabled: true
 
     background: Rectangle {
@@ -41,7 +42,7 @@ C.TextField {
     font.italic: textfield.placeholder !== "" && textfield.text === ""
     color: textfield.hovered && textfield.hoverEnabled && !textfield.focus ? textfield.highlightedColor : textfield.textColor
 
-    opacity: textfield.placeholder === "" ? 1 : 0.75
+    opacity: textfield.placeholder === "" || textfield.enabled ? 1 : 0.75
     placeholderText: textfield.placeholder
     placeholderTextColor: textfield.placeholderColor
     verticalAlignment: Text.AlignVCenter

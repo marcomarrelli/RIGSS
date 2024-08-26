@@ -19,7 +19,20 @@ Item {
     property color backgroundColor: Theme.mid
     property real backgroundRadius: 25
 
+    property var selectedGasStation: undefined
+
+    signal add()
+    signal edit(gasStation: var)
+    signal remove(gasStation: var)
+
     signal close()
+
+    function refreshModel() {
+        userView.model = userPage.gasStations.getOwnGasStations(userPage.username, true)
+        userView.positionViewAtBeginning()
+        userView.forceLayout()
+        userView.forceActiveFocus()
+    }
 
     Rectangle {
         id: background
@@ -79,16 +92,21 @@ Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: "Add"
+                onClicked: userPage.add()
             }
             Controls.Button {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: "Edit"
+                enabled: Utils.exists(userPage.selectedGasStation)
+                onClicked: userPage.edit(userPage.selectedGasStation)
             }
             Controls.Button {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: "Remove"
+                enabled: Utils.exists(userPage.selectedGasStation)
+                onClicked: userPage.remove(userPage.selectedGasStation)
             }
         }
         Rectangle {
@@ -98,24 +116,24 @@ Item {
             color: Theme.text
         }
     }
-    Controls.TextField {
-        id: searchbar
-        
-        height: Utils.perc(parent.height, 7)-5
-        anchors {
-            left: parent.left; right: parent.right
-            top: header.bottom; margins: 5
-        }
-        
-        placeholder: "Search by Name or Place"
-    }
+    // Controls.TextField {
+    //     id: searchbar
+    //     
+    //     height: Utils.perc(parent.height, 7)-5
+    //     anchors {
+    //         left: parent.left; right: parent.right
+    //         top: header.bottom; margins: 5
+    //     }
+    //     
+    //     placeholder: "Search by Name or Place"
+    // }
     ScrollView {
         id: body
 
         property alias model: userView.model
 
         anchors {
-            top: searchbar.bottom; topMargin: 10
+            top: header.bottom; topMargin: 5 //top: searchbar.bottom; topMargin: 5
             bottom: parent.bottom; bottomMargin: 10
             left: parent.left; leftMargin: 5
             right: parent.right; rightMargin: 5
@@ -135,18 +153,19 @@ Item {
             reuseItems: true
             clip: true
 
-            model: userPage.gasStations.getOwnGasStations("ROBGAS COMMERCIALE S.R.L.")
+            model: userPage.gasStations.getOwnGasStations(userPage.username, true)
             delegate: GasStationCard {
                 width: userView.width
                 height: Utils.perc(userView.height, 22.5)
 
+                selected: model === userPage.selectedGasStation
                 gasStation: model
                 gasStationData: userPage.gasStations.model
-            }
-            onModelChanged: {
-                userView.positionViewAtBeginning()
-                userView.forceLayout()
-                userView.forceActiveFocus()
+
+                onClicked: {
+                    if(selected) userPage.selectedGasStation = undefined
+                    else userPage.selectedGasStation = model
+                }
             }
         }
     }

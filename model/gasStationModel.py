@@ -174,7 +174,7 @@ class GasStations(QObject):
         return results
 
     @pyqtSlot(str, bool, result=QObject)
-    def getOwnGasStations(self, gestore: str, onlySimulated: bool = None) -> QObject:
+    def getOwnGasStations(self, gestore: str, onlySimulated: bool = False) -> QObject:
         query = QSqlQuery()
         q = """
             SELECT idImpianto, gestore, bandiera, tipologia, nome, via, cap, comune, provincia, latitudine, longitudine, simulato
@@ -193,7 +193,7 @@ class GasStations(QObject):
 
         return self._ownModel
  
-    @pyqtSlot(str, str, str, str, str, str, str, str, float, float, bool, result=bool)
+    @pyqtSlot(str, str, str, str, str, str, str, str, float, float, result=bool)
     def insertGasStation(self, gestore: str, bandiera: str, tipologia: str, nome: str, via: str, cap: str, comune: str, provincia: str, latitudine: float, longitudine: float) -> bool:
         query = QSqlQuery()
         query.prepare("SELECT MAX(idImpianto) FROM Distributore")
@@ -225,14 +225,14 @@ class GasStations(QObject):
         query.bindValue(":simulato", True)
         
         if query.exec_():
-            self.ownModelChanged()
+            self.refresh()
             return True
         else:
             print("Error Inserting New Gas Station:", query.lastError().text())
             return False
     
-    @pyqtSlot(int, str, str, str, str, str, str, str, str, float, float, bool, result=bool)
-    def updateGasStation(self, idImpianto: int, gestore: str, bandiera: str, tipologia: str, nome: str, via: str, cap: str, comune: str, provincia: str, latitudine: float, longitudine: float, simulato: bool) -> bool:
+    @pyqtSlot(int, str, str, str, str, str, str, str, str, float, float, result=bool)
+    def updateGasStation(self, idImpianto: int, gestore: str, bandiera: str, tipologia: str, nome: str, via: str, cap: str, comune: str, provincia: str, latitudine: float, longitudine: float) -> bool:
         query = QSqlQuery()
         query.prepare("""
             UPDATE Distributore
@@ -245,11 +245,10 @@ class GasStations(QObject):
                 comune = :comune,
                 provincia = :provincia,
                 latitudine = :latitudine,
-                longitudine = :longitudine,
-                simulato = :simulato
+                longitudine = :longitudine
             WHERE idImpianto = :idImpianto;
         """)
-
+        
         query.bindValue(":idImpianto", idImpianto)
         query.bindValue(":gestore", gestore)
         query.bindValue(":bandiera", bandiera)
@@ -261,10 +260,9 @@ class GasStations(QObject):
         query.bindValue(":provincia", provincia)
         query.bindValue(":latitudine", latitudine)
         query.bindValue(":longitudine", longitudine)
-        query.bindValue(":simulato", simulato)
 
         if query.exec_():
-            self.ownModelChanged()
+            self.refresh()
             return True
         else:
             print("Error Updating Gas Station:", query.lastError().text())
@@ -277,7 +275,7 @@ class GasStations(QObject):
         query.bindValue(":idImpianto", idImpianto)
         
         if query.exec_():
-            self.ownModelChanged()
+            self.refresh()
             return True
         else:
             print("Error Deleting Gas Station:", query.lastError().text())

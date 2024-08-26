@@ -21,6 +21,7 @@ T.Button {
     property color borderColor: Theme.border
 
     width: 200; height: 100
+    opacity: enabled ? 1 : 0.75
     hoverEnabled: true
 
     background: Rectangle {

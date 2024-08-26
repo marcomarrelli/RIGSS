@@ -1,4 +1,8 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+import QtLocation 5.15
+import QtPositioning 5.15
 
 import ApplicationSettings 1.0
 import GasStations 1.0
@@ -66,10 +70,50 @@ Item {
         username: mainPage.username
         gasStations: gasStationsData
 
+        onAdd: {
+            gasStationEditor.show()
+        }
+        onEdit: (gasStation) => {
+            gasStationEditor.show(gasStation)
+        }
+        onRemove: (gasStation) => {
+            var check = gasStationsData.deleteGasStation(gasStation.idImpianto)
+            if(check) userPanel.refreshModel()
+        }
+
         onClose: {
             userPanel.visible = false
             controlPanel.visible = true
         }
+    }
+
+    Popup {
+        id: gasStationEditor
+
+        function show(gasStation = undefined) {
+            gasStationEditor.open()
+            if(Utils.exists(gasStation)) editorPanel.gasStation = gasStation
+        }
+
+        width: Utils.perc(parent.width, 45)
+        height: Utils.perc(parent.height, 90)
+
+        anchors.centerIn: parent
+
+        focus: true
+        modal: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle { color: "transparent" }
+        contentItem: GasStationEditor {
+            id: editorPanel
+
+            gasStationManager: gasStationsData
+            usernameGestore: userPanel.username
+            onGetMapCenter: editorPanel.setPosition(gasStationMap.center ?? gasStationMap.centerCoordinates)
+        }
+
+        onClosed: userPanel.refreshModel()
     }
 
     GasStations { id: gasStationsData }

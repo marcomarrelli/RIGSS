@@ -15,6 +15,8 @@ Item {
     property var gasStation
     property var gasStationData
 
+    property bool selected: false
+
     property color textColor: Theme.text
     property color backgroundColor: Theme.light
     property real radius: 12.5
@@ -31,7 +33,7 @@ Item {
 
         border {
             width: 1
-            color: Theme.border
+            color: card.selected ? Theme.highlight : Theme.border
         }
         radius: card.radius
         color: card.backgroundColor
@@ -79,7 +81,7 @@ Item {
             right: parent.right; rightMargin: 5
         }
 
-        text: gasStation ? gasStation.via.slice(0, -6) ?? "N/A" : "N/A"
+        text: gasStation ? (gasStation.simulato ? (gasStation.via ?? "N/A") : (gasStation.via.slice(0, -6) ?? "N/A")) : "N/A"
         
         font {
             pointSize: -1
@@ -146,10 +148,6 @@ Item {
         horizontalAlignment: Text.AlignLeft
     }
 
-    /*
-    { CHECK SIMULAZIONE }
-    */
-
     MouseArea {
         id: handler
 
@@ -157,7 +155,7 @@ Item {
 
         hoverEnabled: true
         onClicked: card.clicked(card.gasStation)
-        onEntered: background.border.color = Theme.highlight
-        onExited: background.border.color = Theme.border
+        onEntered: if(!card.selected) background.border.color = Theme.highlight
+        onExited: if(!card.selected) background.border.color = Theme.border
     }
 }
