@@ -357,6 +357,53 @@ Item {
                 onClicked: controlSection.gasStations.filter.order = ""
             }
         }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        Controls.Label {
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            text: "Show:"
+            horizontalAlignment: Text.AlignLeft
+        }
+        RowLayout {
+            id: simulationDataRow
+
+            function getDataStatus(realData = realDataButton.checked, simulatedData= simulatedDataButton.checked) {
+                if(realData === undefined || simulatedData === undefined) return 2
+                
+                if((realData && simulatedData) || (!realData && !simulatedData)) return 2
+                else return simulatedData ? 1 : 0
+            }
+
+            width: body.width
+            height: Utils.perc(body.height, 7.5)
+
+            spacing: 5
+
+            Controls.Button {
+                id: realDataButton
+
+                Layout.fillWidth: true; Layout.fillHeight: true
+                text: "Real Data"
+                checkable: true
+                checked: true
+                
+                onCheckedChanged: controlSection.gasStations.filter.simulation = simulationDataRow.getDataStatus()
+            }
+            Controls.Button {
+                id: simulatedDataButton
+
+                Layout.fillWidth: true; Layout.fillHeight: true
+                text: "Simulated"
+                checkable: true
+                checked: true
+
+                onCheckedChanged: controlSection.gasStations.filter.simulation = simulationDataRow.getDataStatus()
+            }
+        }
     }
 
     ObjectModel {

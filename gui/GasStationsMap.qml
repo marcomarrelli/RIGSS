@@ -6,6 +6,8 @@ import QtPositioning 5.15
 
 import QtGraphicalEffects 1.12
 
+import Transactions 1.0
+
 import "./controls" as Controls
 import "../logic/utils.js" as Utils
 
@@ -17,6 +19,7 @@ Map {
     readonly property real minZoom: 6.25
     readonly property real maxZoom: 16.75
 
+    property string username: ""
     property var gasStations
 
     readonly property var centerCoordinates: QtPositioning.coordinate(41.9027835, 12.4963655)
@@ -45,7 +48,6 @@ Map {
         fuelsPopup.show(gasStation)
     }
 
-    activeMapType: map.supportedMapTypes[map.supportedMapTypes.length-1]
     width: 500
     height: 500
 
@@ -119,6 +121,9 @@ Map {
             fuelCard.name = gasStation.nome
             fuelCard.fuelList = map.gasStations.getFuels(gasStation.idImpianto)
 
+            fuelCard.userID = map.username
+            fuelCard.gasStationID = gasStation.idImpianto
+
             fuelsPopup.open()
         }
 
@@ -132,6 +137,15 @@ Map {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
         background: Rectangle { color: "transparent" }
-        contentItem: FuelsCard { id: fuelCard }
+        contentItem: FuelsCard {
+            id: fuelCard
+        }
     }
+
+    Component.onCompleted: {
+        var __mapType = map.supportedMapTypes[map.supportedMapTypes.length-1]
+        if(__mapType) map.activeMapType = __mapType
+    }
+
+    Transactions { id: transactionManager }
 }

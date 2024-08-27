@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QObject, QVariant, pyqtProperty, pyqtSignal, pyqtSlot
-from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
+from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot
+from PyQt5.QtSql import QSqlQuery
 
 from .baseModel import BaseModel
 
@@ -12,6 +12,7 @@ class GasStationFilter(QObject):
         self._availableFuels = []
         self._maxPrice = 0.0
         self._service = 2  # 1: Self, 0: Served, 2: ALL
+        self._simulation = 2  # 1: Simulated, 0: Real, 2: ALL
         self._order = ""
 
     @pyqtProperty(str, notify=filterChanged)
@@ -52,6 +53,16 @@ class GasStationFilter(QObject):
     def service(self, value: int) -> None:
         if self._service != value:
             self._service = value
+            self.filterChanged.emit()
+
+    @pyqtProperty(int, notify=filterChanged)
+    def simulation(self) -> int:
+        return self._simulation
+
+    @simulation.setter
+    def simulation(self, value: int) -> None:
+        if self._simulation != value:
+            self._simulation = value
             self.filterChanged.emit()
 
     @pyqtSlot(str)
@@ -129,6 +140,9 @@ class GasStations(QObject):
             OR LOWER(Distributore.comune) LIKE '%{self._filter.name.lower()}%'
             OR LOWER(Distributore.provincia) LIKE '%{self._filter.name.lower()}%')
             """
+        
+        if self._filter.simulation < 2:
+            q += f" AND Distributore.simulato = {self._filter.simulation}"
 
         if self._filter.order:
              q += f" ORDER BY {self._filter.order}"

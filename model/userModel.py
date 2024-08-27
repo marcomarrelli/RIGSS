@@ -6,7 +6,7 @@ from PyQt5.QtSql import QSqlQuery
 from .baseModel import BaseModel
 
 class UsersModel(BaseModel):
-    def __init__(self, parent:QObject=None) -> None:
+    def __init__(self, parent: QObject = None) -> None:
         super(UsersModel, self).__init__(["nickname", "nome", "cognome", "dataNascita", "luogo", "password"])
         super().setQuery("""SELECT nickname, nome, cognome, dataNascita, luogo, password 
                             FROM Utente;""")

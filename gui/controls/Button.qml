@@ -25,7 +25,7 @@ T.Button {
     hoverEnabled: true
 
     background: Rectangle {
-        color: button.checked || button.hovered ? button.highlightedColor : button.backgroundColor
+        color: (button.pressed ? Qt.darker(button.highlightedColor, 1.25) : ((button.checked || button.hovered) ? button.highlightedColor : button.backgroundColor))
         radius: button.radius
 
         border {

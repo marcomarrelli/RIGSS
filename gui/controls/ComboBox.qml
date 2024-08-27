@@ -13,6 +13,7 @@ T.ComboBox {
     property real radius: 5
     property real borderWidth: 1
     property real fontSize: 12
+    property string fontFamily: "Serif Regular"
 
     property bool bold: false
 
@@ -31,6 +32,7 @@ T.ComboBox {
             text: modelData
             color: combobox.textColor
             font.pointSize: combobox.fontSize
+            font.family: combobox.fontFamily
             elide: Text.ElideRight
         }
         background: Rectangle {
@@ -71,6 +73,7 @@ T.ComboBox {
 
         text: combobox.displayText
         font.pointSize: combobox.fontSize
+        font.family: combobox.fontFamily
         color: combobox.pressed ? Theme.light : Theme.text
         elide: Text.ElideRight
     }
@@ -110,50 +113,3 @@ T.ComboBox {
         }
     }
 }
-
-/*
-T.combobox {
-    id: combobox
-
-    property real radius: 5
-    property real borderWidth: 1
-    property real fontSize: combobox.iconCode === "" ? 12 : 20
-
-    property string iconCode: ""
-    property bool bold: false
-
-    property color textColor: Theme.text
-    property color backgroundColor: Theme.light
-    property color highlightedColor: Theme.highlight
-    property color borderColor: Theme.border
-
-    width: 200; height: 100
-    hoverEnabled: true
-
-    background: Rectangle {
-        color: combobox.hovered ? combobox.highlightedColor : combobox.backgroundColor
-        radius: combobox.radius
-
-        border {
-            color: combobox.borderColor
-            width: combobox.borderWidth
-        }
-    }
-
-    contentItem: Label {
-        text: combobox.iconCode === "" ? combobox.text : combobox.iconCode
-        color: combobox.textColor
-
-        font {
-            pointSize: combobox.fontSize
-            bold: combobox.bold
-            family: combobox.iconCode === "" ? combobox.font.family : "Phosphor"
-        }
-
-        antialiasing: true
-        
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-    }
-}
-*/

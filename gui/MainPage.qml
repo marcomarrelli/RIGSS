@@ -29,6 +29,7 @@ Item {
 
         mapRadius: mainPage.radius
 
+        username: mainPage.username
         gasStations: gasStationsData
     }
 
