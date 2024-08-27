@@ -42,7 +42,7 @@ C.TextField {
     font.italic: textfield.placeholder !== "" && textfield.text === ""
     color: textfield.hovered && textfield.hoverEnabled && !textfield.focus ? textfield.highlightedColor : textfield.textColor
 
-    opacity: textfield.placeholder === "" || textfield.enabled ? 1 : 0.75
+    opacity: textfield.placeholder === "" || textfield.enabled ? 1 : 0.5
     placeholderText: textfield.placeholder
     placeholderTextColor: textfield.placeholderColor
     verticalAlignment: Text.AlignVCenter

@@ -173,6 +173,54 @@ class GasStations(QObject):
         
         return results
 
+    @pyqtSlot(int, str, float, bool, result=bool)
+    def insertFuel(self, idImpianto: int, nome: str, prezzo: float, selfService: bool) -> bool:
+        query = QSqlQuery()
+        query.prepare("""
+            INSERT INTO Carburante (idImpianto, nome, prezzo, self, dataAggiornamento)
+            VALUES (:idImpianto, :nome, :prezzo, :selfService, :dataAggiornamento);
+        """)
+        query.bindValue(":idImpianto", idImpianto)
+        query.bindValue(":nome", nome)
+        query.bindValue(":prezzo", prezzo)
+        query.bindValue(":selfService", selfService)
+        query.bindValue(":dataAggiornamento", None)
+
+        if query.exec_():
+            self.refresh()
+            return True
+        else:
+            print("Error Inserting Fuel:", query.lastError().text())
+            return False
+        
+    @pyqtSlot(int, str, float, bool, result=bool)
+    def updateFuel(self, idImpianto: int, nome: str, prezzo: float, selfService: bool) -> bool:
+        query = QSqlQuery()
+
+        if prezzo == 0:
+            query.prepare("""
+                DELETE FROM Carburante
+                WHERE idImpianto = :idImpianto AND nome = :nome AND self = :selfService;
+            """)
+        else:
+            query.prepare("""
+                UPDATE Carburante
+                SET prezzo = :prezzo
+                WHERE idImpianto = :idImpianto AND nome = :nome AND self = :selfService;
+            """)
+            query.bindValue(":prezzo", prezzo)
+        
+        query.bindValue(":idImpianto", idImpianto)
+        query.bindValue(":nome", nome)
+        query.bindValue(":selfService", selfService)
+
+        if query.exec_():
+            self.refresh()
+            return True
+        else:
+            print("Error Updating/Deleting Fuel:", query.lastError().text())
+            return False
+
     @pyqtSlot(str, bool, result=QObject)
     def getOwnGasStations(self, gestore: str, onlySimulated: bool = False) -> QObject:
         query = QSqlQuery()

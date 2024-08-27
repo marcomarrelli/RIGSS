@@ -216,7 +216,7 @@ Item {
 
         Item {
             width: body.width
-            height: Utils.perc(body.height, 5)
+            height: Utils.perc(body.height, 2.5)
         }
 
         RowLayout {

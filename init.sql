@@ -63,12 +63,12 @@ CREATE TABLE Valutazione (
     idValutazione INTEGER NOT NULL,
 	idImpianto INTEGER NOT NULL,
     idUtente VARCHAR(31) NOT NULL,
-	valutazione INTEGER NOT NULL,
+	stelle INTEGER NOT NULL,
     recensione VARCHAR(255),
 	PRIMARY KEY (idValutazione),
     FOREIGN KEY (idImpianto) REFERENCES Distributore(idImpianto),
     FOREIGN KEY (idUtente) REFERENCES Utente(nickname),
-	CONSTRAINT CheckValutazione CHECK (valutazione BETWEEN 0 AND 5)
+	CONSTRAINT CheckValutazione CHECK (stelle BETWEEN 0 AND 5)
 );
 
 CREATE TABLE MetodoPagamento (
@@ -82,15 +82,17 @@ CREATE TABLE Transazione (
 	idImpianto INTEGER NOT NULL,
     idUtente VARCHAR(31) NOT NULL,
     metodoPagamento INTEGER NOT NULL,
-	quantita DECIMAL(5, 2) NOT NULL,
     tipologia VARCHAR(31) NOT NULL,
     servito BOOLEAN NOT NULL,
+	quantita DECIMAL(5, 2) NOT NULL,
     spesa DECIMAL(6, 2) NOT NULL,
     dataTransazione DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (idTransazione),
-    FOREIGN KEY (idImpianto) REFERENCES Distributore(idImpianto),
+    FOREIGN KEY (idImpianto) REFERENCES Carburante(idImpianto),
     FOREIGN KEY (idUtente) REFERENCES Utente(nickname),
-    FOREIGN KEY (metodoPagamento) REFERENCES MetodoPagamento(idMetodoPagamento)
+    FOREIGN KEY (metodoPagamento) REFERENCES MetodoPagamento(idMetodoPagamento),
+    FOREIGN KEY (tipologia) REFERENCES Carburante(nome),
+    FOREIGN KEY (servito) REFERENCES Carburante(self)
 );
 
 CREATE TABLE Fattura (
@@ -102,17 +104,17 @@ CREATE TABLE Fattura (
     FOREIGN KEY (idTransazione) REFERENCES Transazione(idTransazione)
 );
 
-CREATE TABLE TipologiaPromozione (
-    idTipologiaPromozione INTEGER NOT NULL,
+CREATE TABLE TipologiaSconto (
+    idTipologiaSconto INTEGER NOT NULL,
 	nome VARCHAR(31) NOT NULL,
-	PRIMARY KEY (idTipologiaPromozione)
+	PRIMARY KEY (idTipologiaSconto)
 );
 
-CREATE TABLE Promozione (
+CREATE TABLE Sconto (
     idPromozione INTEGER NOT NULL,
-    idTipologiaPromozione INTEGER NOT NULL,
+    idTipologiaSconto INTEGER NOT NULL,
 	valore DECIMAL(5, 2) NOT NULL,
 	PRIMARY KEY (idPromozione),
-    FOREIGN KEY (idTipologiaPromozione) REFERENCES TipologiaPromozione(idTipologiaPromozione),
+    FOREIGN KEY (idTipologiaSconto) REFERENCES TipologiaPromozione(idTipologiaSconto),
 	CONSTRAINT CheckValore CHECK (valore BETWEEN 0.00 AND 100.00)
 );

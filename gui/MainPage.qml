@@ -70,12 +70,9 @@ Item {
         username: mainPage.username
         gasStations: gasStationsData
 
-        onAdd: {
-            gasStationEditor.show()
-        }
-        onEdit: (gasStation) => {
-            gasStationEditor.show(gasStation)
-        }
+        onAdd: gasStationEditor.show()
+        onAddFuels: (gasStation) => fuelEditor.show(gasStation)
+        onEdit: (gasStation) => gasStationEditor.show(gasStation)
         onRemove: (gasStation) => {
             var check = gasStationsData.deleteGasStation(gasStation.idImpianto)
             if(check) userPanel.refreshModel()
@@ -111,6 +108,33 @@ Item {
             gasStationManager: gasStationsData
             usernameGestore: userPanel.username
             onGetMapCenter: editorPanel.setPosition(gasStationMap.center ?? gasStationMap.centerCoordinates)
+        }
+
+        onClosed: userPanel.refreshModel()
+    }
+
+    Popup {
+        id: fuelEditor
+
+        function show(gasStation = undefined) {
+            fuelEditor.open()
+            if(Utils.exists(gasStation)) fuelPanel.gasStation = gasStation
+        }
+
+        width: Utils.perc(parent.width, 45)
+        height: Utils.perc(parent.height, 90)
+
+        anchors.centerIn: parent
+
+        focus: true
+        modal: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle { color: "transparent" }
+        contentItem: FuelEditor {
+            id: fuelPanel
+
+            gasStationManager: gasStationsData
         }
 
         onClosed: userPanel.refreshModel()

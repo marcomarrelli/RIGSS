@@ -64,7 +64,7 @@ Item {
                 iconCode: Utils.getIcon(0xE4C2)
                 radius: controlSection.backgroundRadius
                 enabled: controlSection.username !== ""
-                opacity: enabled ? 1 : 0.25
+                opacity: enabled ? 1 : 0.5
 
                 onClicked: controlSection.openUserPage()
             }
@@ -227,7 +227,7 @@ Item {
                 Layout.preferredWidth: Utils.perc(parent.width, 5)-parent.spacing
                 Layout.fillHeight: true
 
-                text: "€"
+                text: "€/L"
                 horizontalAlignment: Text.AlignLeft
             }
         }

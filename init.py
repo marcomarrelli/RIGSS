@@ -94,8 +94,8 @@ def addFixedValues():
     addNameLogo(q, "Bandiera", "Api-Ip", agiIp)
     addNameLogo(q, "Bandiera", "Tamoil", tamoil)
 
-    q.exec_('INSERT INTO TipologiaPromozione(nome) VALUES ("Sconto");')
-    q.exec_('INSERT INTO TipologiaPromozione(nome) VALUES ("Cashback");')
+    q.exec_('INSERT INTO TipologiaSconto(nome) VALUES ("Sconto");')
+    q.exec_('INSERT INTO TipologiaSconto(nome) VALUES ("Cashback");')
 
     q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Contanti");')
     q.exec_('INSERT INTO MetodoPagamento(nome) VALUES ("Carta di Debito");')

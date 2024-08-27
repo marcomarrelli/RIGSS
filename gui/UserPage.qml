@@ -22,6 +22,7 @@ Item {
     property var selectedGasStation: undefined
 
     signal add()
+    signal addFuels(gasStation: var)
     signal edit(gasStation: var)
     signal remove(gasStation: var)
 
@@ -93,6 +94,13 @@ Item {
                 Layout.fillWidth: true
                 text: "Add"
                 onClicked: userPage.add()
+            }
+            Controls.Button {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: "Fuels.."
+                enabled: Utils.exists(userPage.selectedGasStation)
+                onClicked: userPage.addFuels(userPage.selectedGasStation)
             }
             Controls.Button {
                 Layout.fillHeight: true
