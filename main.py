@@ -42,7 +42,6 @@ from PyQt5.QtGui import QGuiApplication, QFontDatabase, QIcon
 
 from init import initializeDatabase, close as closeDatabaseConnection
 
-from model.baseModel import BaseModel
 from model.gasStationModel import GasStations
 from model.userModel import Users
 from model.statisticsModel import Statistics
@@ -50,7 +49,7 @@ from model.reviewModel import Reviews
 from model.transactionModel import Transactions
 
 CURRENT_DIRECTORY = Path(__file__).resolve().parent
-GAS_STATIONS_NUMBER = 100
+GAS_STATIONS_NUMBER = 1000
 
 mainFilePath = QUrl.fromLocalFile(os.fspath(CURRENT_DIRECTORY / "gui" / "RIGSS.qml"))
 themeFilePath = QUrl.fromLocalFile(os.fspath(CURRENT_DIRECTORY / "gui" / "Theme.qml"))

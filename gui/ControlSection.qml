@@ -5,6 +5,7 @@ import QtQuick.Window 2.15
 import QtQml.Models 2.15
 
 import ApplicationSettings 1.0
+import Statistics 1.0
 
 import "./controls" as Controls
 import "../logic/utils.js" as Utils
@@ -409,9 +410,215 @@ Item {
     ObjectModel {
         id: statisticsModel
 
-        Rectangle { width: body.width; height: Utils.perc(body.height, 30); color: "green" }
-        Rectangle { width: body.width; height: Utils.perc(body.height, 30); color: "yellow" }
-        Rectangle { width: body.width; height: Utils.perc(body.height, 30); color: "orange" }
-        Rectangle { width: body.width; height: Utils.perc(body.height, 30); color: "gray" }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.fillHeight: true
+
+                text: "Choose Fuel:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.ComboBox {
+                id: statisticsActiveFuel
+
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.preferredHeight: Utils.perc(body.height, 7.5)
+
+                model: ["Benzina", "Gasolio", "Metano", "GPL"]
+
+                currentIndex: -1
+                onCurrentTextChanged: statisticManager.getFuelStatistics(currentText)
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Average" : "Average\n" + statisticsActiveFuel.currentText + " Price:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "" : String(statisticManager.averagePrice.toFixed(3)) + " €/L"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+            
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Mode" : "Mode of\n" + statisticsActiveFuel.currentText + " Prices:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "" : String(statisticManager.modePrice.toFixed(3)) + " €/L"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+            
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Lowest Price" : "Lowest\n" + statisticsActiveFuel.currentText + " Price:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "" : String(statisticManager.minPrice.toFixed(3)) + " €/L"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+            
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Highest Price" : "Highest\n" + statisticsActiveFuel.currentText + " Price:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "" : String(statisticManager.maxPrice.toFixed(3)) + " €/L"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+            
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Standard Deviation" : "Standard Deviation Of\n" + statisticsActiveFuel.currentText + " Prices:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "" : String(statisticManager.standardDeviationPrice.toFixed(3)) + " €/L"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+            
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Distribution" : statisticsActiveFuel.currentText + "\nDistribution:"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "" : String(statisticManager.fuelTypeDistribution.toFixed(2)) + " %"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+        Rectangle {
+            width: body.width; height: 1
+            color: Theme.light; opacity: 0.75
+        }
+        RowLayout {
+            width: body.width
+            height: Utils.perc(body.height, 10)
+
+            spacing: 5
+            
+            Controls.Label {
+                Layout.preferredWidth: Utils.perc(body.width, 60)-parent.spacing
+                Layout.fillHeight: true
+
+                text: statisticsActiveFuel.currentIndex === -1 ? "Average Difference\nBetween Served\nand Self Served:" : "Average Difference\nBetween Served " + statisticsActiveFuel.currentText + "\nand Self Served " + statisticsActiveFuel.currentText + ":"
+                horizontalAlignment: Text.AlignLeft
+            }
+            Controls.TextField {
+                Layout.preferredWidth: Utils.perc(body.width, 40)-parent.spacing
+                Layout.preferredHeight: Utils.perc(parent.height, 75)
+
+                text: (!enabled || statisticsActiveFuel.currentIndex === -1 || statisticsActiveFuel.currentText === "GPL") ? "" : String(statisticManager.priceDifferenceSelfService.toFixed(3)) + " €/L"
+                enabled: statisticsActiveFuel.currentText !== "GPL"
+                readOnly: true
+                horizontalAlignment: Text.AlignRight
+            }
+        }
     }
+
+    Statistics { id: statisticManager }
 }
