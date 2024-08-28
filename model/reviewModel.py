@@ -92,8 +92,9 @@ class Reviews(QObject):
 
         if query.exec_():
             self._ownModel.setQuery(query)
-
-        return self._ownModel
+            return self._ownModel
+        
+        return QObject()
 
     @pyqtSlot(int, result=int)
     def getAverageRating(self, idImpianto: int) -> int:

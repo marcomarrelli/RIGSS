@@ -124,6 +124,7 @@ Map {
             fuelCard.userID = map.username
             fuelCard.gasStationID = gasStation.idImpianto
 
+            fuelCard.visible = true
             fuelsPopup.open()
         }
 
@@ -139,6 +140,11 @@ Map {
         background: Rectangle { color: "transparent" }
         contentItem: FuelsCard {
             id: fuelCard
+        }
+
+        onClosed: {
+            fuelCard.ratingsVisible = false
+            fuelCard.visible = false
         }
     }
 

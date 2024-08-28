@@ -20,6 +20,8 @@ Item {
     property color backgroundColor: Theme.mid
     property real radius: 12.5
 
+    property alias ratingsVisible: reviewsPanel.visible
+
     Rectangle {
         id: background
 

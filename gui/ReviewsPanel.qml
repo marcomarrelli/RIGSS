@@ -164,7 +164,7 @@ Item {
                     Layout.preferredWidth: Utils.perc(ratingRow.width, 62.5)-ratingRow.spacing
                     Layout.fillHeight: true
 
-                    text: String(model.idUtente + ": " + model.recensione)
+                    text: String(model.idUtente + ((model.recensione === "") ? "" : (": " + model.recensione)))
                     horizontalAlignment: Text.AlignLeft
                 }
                 Controls.Button {
@@ -245,5 +245,13 @@ Item {
         }
     }
 
+    onVisibleChanged: {
+        starBox.currentIndex = 0
+        reviewText.text = ""
+        controlRow.visible = false
+
+        ratingView.enabled = true
+        if(visible) ratingView.refreshRatings()
+    }
     Reviews { id: reviewsManager }
 }
